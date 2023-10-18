@@ -13,11 +13,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const theme = useTheme();
-  const [value, loading, error] = useCollection(
-    query(collection(firestore, "posts"))
-  );
+  // const [value, loading, error] = useCollection(
+  //   query(collection(firestore, "posts"))
+  // );
 
-  console.log(!loading && value.docs.map((doc) => doc.data()));
+  // console.log(!loading && value.docs.map((doc) => doc.data()));
   return (
     <>
       <Head>
