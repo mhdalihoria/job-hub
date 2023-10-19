@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { firestore } from "@/lib/firebase";
 import { collection, query, where } from "firebase/firestore";
+import DefaultLayout from "@/layouts/DefaultLayout"
 
 //----------------------------------------------------------
 
@@ -23,7 +24,9 @@ export default function Home() {
       <Head>
         <title>Job Hub - Home</title>
       </Head>
+      <DefaultLayout>
       <main>something</main>
+      </DefaultLayout>
     </>
   );
 }
