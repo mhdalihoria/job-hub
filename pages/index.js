@@ -21,9 +21,7 @@ export default function Home() {
   // console.log(!loading && value.docs.map((doc) => doc.data()));
   return (
     <>
-      <Head>
-        <title>Job Hub - Home</title>
-      </Head>
+
       <DefaultLayout>
       <main>something</main>
       </DefaultLayout>
