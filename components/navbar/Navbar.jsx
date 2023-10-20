@@ -17,6 +17,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import Logo from "@/public/imgs/logo.svg";
 import Image from "next/image";
+import useAuthStore from "@/stores/authStore";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -61,12 +62,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar() {
   const theme = useTheme();
+  const {isLoggedIn} = useAuthStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  console.log(isLoggedIn);
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -167,7 +169,6 @@ export default function PrimarySearchAppBar() {
           color: theme.palette.text.primary,
         }}
         sx={{ paddingTop: { xs: ".5rem", sm: ".3rem" } }}
-
       >
         <Toolbar>
           {/* <IconButton
@@ -179,11 +180,7 @@ export default function PrimarySearchAppBar() {
           >
             <MenuIcon />
           </IconButton> */}
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-          >
+          <Typography variant="h6" noWrap component="div">
             <Image src={Logo} alt="logo" width={150} height={50} />
           </Typography>
           {/* <Search>
