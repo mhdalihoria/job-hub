@@ -12,15 +12,17 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Head from "next/head";
-import { Paper, useTheme } from "@mui/material";
+import { Divider, Paper, useTheme } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import GoogleIcon from "@mui/icons-material/Google";
 
 //TODO: Find a way to get logged in user's data (first name, last name, etc) [most likely you'll need firestore]
 function Login() {
   const theme = useTheme();
+  const googleProvider = new GoogleAuthProvider();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -29,17 +31,36 @@ function Login() {
     password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = async (values, {resetForm}) => {
+  const handleSubmit = async (values, { resetForm }) => {
     try {
       const { email, password } = values;
       const userFB = await signInWithEmailAndPassword(auth, email, password);
       console.log(userFB);
-      
+
       resetForm();
     } catch (err) {
       console.error(err);
     }
   };
+
+  const googleSignupHandler = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      const firstName = user.displayName.split(' ')[0]
+      const lastName = user.displayName.split(' ')[1]
+      const email = user.email
+
+      console.log("firstname", firstName)
+      console.log("lastname", lastName)
+      console.log("email", email)
+
+      setUserCredentials(firstName, lastName, user.uid);
+
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -71,7 +92,7 @@ function Login() {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            <Form>
+            <Form style={{width: "100%"}}>
               <Field
                 as={TextField}
                 margin="normal"
@@ -120,10 +141,30 @@ function Login() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Login
               </Button>
             </Form>
           </Formik>
+
+          <Divider sx={{ fontSize: ".7rem" }}>or</Divider>
+
+          <Button
+            sx={{
+              background: theme.palette.background.paper,
+              color: theme.palette.text.primary,
+              width: "100%",
+              mb: 3,
+              mt: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+            variant="outlined"
+            onClick={googleSignupHandler}
+          >
+            <GoogleIcon fontSize="small" /> Signup With Google
+          </Button>
+
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2" sx={{ color: "info.main" }}>
