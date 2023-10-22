@@ -1,34 +1,42 @@
-import Link from "next/link";
-import { Box, Container, Grid, IconButton, styled } from "@mui/material";
+/* eslint-disable react/jsx-props-no-spreading */
+import { Box, Container, Grid, styled } from "@mui/material";
 import Image from "next/image";
 import Logo from "@/public/imgs/reverse-logo.svg";
+import Link from "next/link";
+import useThemeStore from "@/stores/themeStore";
 
 // styled component
-const StyledFooter = styled(Box)(({ theme }) => ({
-  background: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
+const StyledFooter = styled(Box)(({ theme, islighttheme }) => ({
+  background: islighttheme
+    ? theme.palette.primary.main
+    : theme.palette.background.default,
+  color: islighttheme
+    ? theme.palette.primary.contrastText
+    : theme.palette.text.primary,
 }));
 
-const StyledLink = styled(Link)(({ theme }) => ({
+const StyledLink = styled("a")(({ theme, islighttheme }) => ({
   display: "block",
   borderRadius: 4,
   cursor: "pointer",
   position: "relative",
   padding: "0.3rem 0rem",
-  color: theme.palette.primary.contrastText,
+  color: islighttheme
+    ? theme.palette.primary.contrastText
+    : theme.palette.text.primary,
   textDecoration: "none",
   "&:hover": {
-    transform: "scale(1.1)",
+    transform: "scale(1.009)",
   },
 }));
 const Footer = () => {
+  const { isLightTheme } = useThemeStore();
   return (
     <footer>
-      <StyledFooter>
+      <StyledFooter islighttheme={isLightTheme ? 1 : 0}>
         <Container
           sx={{
             p: "1rem",
-            color: "white",
           }}
         >
           <Box py={10} overflow="hidden">
@@ -58,7 +66,12 @@ const Footer = () => {
 
                 <div>
                   {aboutLinks.map((item, ind) => (
-                    <StyledLink href="/" key={ind} passHref>
+                    <StyledLink
+                      href="/"
+                      key={ind}
+                      passHref
+                      islighttheme={isLightTheme ? 1 : 0}
+                    >
                       {item}
                     </StyledLink>
                   ))}
@@ -78,7 +91,12 @@ const Footer = () => {
 
                 <div>
                   {customerCareLinks.map((item, ind) => (
-                    <StyledLink href="/" key={ind} passHref>
+                    <StyledLink
+                      href="/"
+                      key={ind}
+                      passHref
+                      islighttheme={isLightTheme ? 1 : 0}
+                    >
                       {item}
                     </StyledLink>
                   ))}
@@ -113,6 +131,7 @@ const Footer = () => {
     </footer>
   );
 };
+
 const aboutLinks = [
   "Careers",
   "Our Stores",
