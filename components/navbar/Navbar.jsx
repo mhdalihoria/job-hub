@@ -21,6 +21,7 @@ import useAuthStore from "@/stores/authStore";
 import { Button } from "@mui/material";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import useThemeStore from "@/stores/themeStore";
+import { useRouter } from "next/router";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -65,6 +66,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar() {
   const theme = useTheme();
+  const router = useRouter()
   const { isLoggedIn } = useAuthStore();
   const { isLightTheme, switchTheme } = useThemeStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -96,6 +98,7 @@ export default function PrimarySearchAppBar() {
         color: theme.palette.primary.contrastText,
         marginLeft: "10px",
       }}
+      onClick={()=>{router.push('/login')}}
     >
       Login
     </Button>
@@ -108,6 +111,8 @@ export default function PrimarySearchAppBar() {
         color: theme.palette.secondary.contrastText,
         marginLeft: "10px",
       }}
+      onClick={()=>{router.push('/signup')}}
+
     >
       Signup
     </Button>
