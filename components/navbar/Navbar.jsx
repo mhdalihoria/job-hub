@@ -18,6 +18,9 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import Logo from "@/public/imgs/logo.svg";
 import Image from "next/image";
 import useAuthStore from "@/stores/authStore";
+import { Button } from "@mui/material";
+import { DarkMode, LightMode } from "@mui/icons-material";
+import useThemeStore from "@/stores/themeStore";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -62,13 +65,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar() {
   const theme = useTheme();
-  const {isLoggedIn} = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
+  const { isLightTheme, switchTheme } = useThemeStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  console.log(isLoggedIn);
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -85,6 +88,41 @@ export default function PrimarySearchAppBar() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const loginButton = (
+    <Button
+      sx={{
+        background: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        marginLeft: "10px",
+      }}
+    >
+      Login
+    </Button>
+  );
+
+  const signupButton = (
+    <Button
+      sx={{
+        background: theme.palette.secondary.main,
+        color: theme.palette.secondary.contrastText,
+        marginLeft: "10px",
+      }}
+    >
+      Signup
+    </Button>
+  );
+
+  const themeSwitch = (
+    <IconButton
+      size="large"
+      aria-label="show 4 new mails"
+      color={theme.palette.text.primary}
+      onClick={() => switchTheme()}
+    >
+      {isLightTheme ? <DarkMode /> : <LightMode />}
+    </IconButton>
+  );
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -125,38 +163,54 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
+      {isLoggedIn ? (
+        <Box>
+          <MenuItem>
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
+            >
+              <Badge badgeContent={4} color="error">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <p>Messages</p>
+          </MenuItem>
+          <MenuItem>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Badge badgeContent={17} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <p>Notifications</p>
+          </MenuItem>
+          <MenuItem onClick={handleProfileMenuOpen}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="primary-search-account-menu"
+              aria-haspopup="true"
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <p>Profile</p>
+          </MenuItem>
+        </Box>
+      ) : (
+        <Box>
+          <MenuItem>{loginButton}</MenuItem>
+          <MenuItem>{signupButton}</MenuItem>
+          <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
+            {themeSwitch}
+          </MenuItem>
+        </Box>
+      )}
     </Menu>
   );
 
@@ -194,36 +248,47 @@ export default function PrimarySearchAppBar() {
           </Search> */}
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
+            {isLoggedIn ? (
+              <>
+                <IconButton
+                  size="large"
+                  aria-label="show 4 new mails"
+                  color="inherit"
+                >
+                  <Badge badgeContent={4} color="error">
+                    <MailIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  aria-label="show 17 new notifications"
+                  color="inherit"
+                >
+                  <Badge badgeContent={17} color="error">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                {themeSwitch}
+                {loginButton}
+                {signupButton}
+              </>
+            )}
           </Box>
+
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -233,7 +298,7 @@ export default function PrimarySearchAppBar() {
               onClick={handleMobileMenuOpen}
               color="inherit"
             >
-              <MoreIcon />
+              <MenuIcon />
             </IconButton>
           </Box>
         </Toolbar>
