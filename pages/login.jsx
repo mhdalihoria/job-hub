@@ -12,7 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Head from "next/head";
-import { Divider, Paper, useTheme } from "@mui/material";
+import { Alert, Divider, Paper, Snackbar, useTheme } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
@@ -23,7 +23,11 @@ import GoogleIcon from "@mui/icons-material/Google";
 function Login() {
   const theme = useTheme();
   const googleProvider = new GoogleAuthProvider();
-
+  const [open, setOpen] = React.useState(false);
+  const [snackbarData, setSnackbarData] = React.useState({
+    variant: null,
+    text: null,
+  });
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .required("Email is required")
@@ -36,36 +40,57 @@ function Login() {
       const { email, password } = values;
       const userFB = await signInWithEmailAndPassword(auth, email, password);
       console.log(userFB);
-
+      setOpen(true);
+      setSnackbarData({
+        variant: "success",
+        text: "Signed up Successfully. Redirecting...",
+      });
       resetForm();
     } catch (err) {
+      setOpen(true);
+      setSnackbarData({
+        variant: "error",
+        text: "Something Went Wrong. Check your Info and Try again Later",
+      });
       console.error(err);
     }
   };
 
   const googleSignupHandler = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
-      const firstName = user.displayName.split(' ')[0]
-      const lastName = user.displayName.split(' ')[1]
-      const email = user.email
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const firstName = user.displayName.split(" ")[0];
+      const lastName = user.displayName.split(" ")[1];
+      const email = user.email;
 
-      console.log("firstname", firstName)
-      console.log("lastname", lastName)
-      console.log("email", email)
-
+      setOpen(true);
+      setSnackbarData({
+        variant: "success",
+        text: "Signed up Successfully. Redirecting...",
+      });
       setUserCredentials(firstName, lastName, user.uid);
-
     } catch (err) {
-      console.error(err)
+      setOpen(true);
+      setSnackbarData({
+        variant: "error",
+        text: "Something Went Wrong. Check your Info and Try again Later",
+      });
+      console.error(err);
     }
-  }
+  };
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   return (
     <Container component="main" maxWidth="xs">
       <Head>
-        <title>Job Hub Login</title>
+        <title>Job Hub - Login</title>
       </Head>
       <CssBaseline />
       <Paper elevation={1}>
@@ -92,7 +117,7 @@ function Login() {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            <Form style={{width: "100%"}}>
+            <Form style={{ width: "100%" }}>
               <Field
                 as={TextField}
                 margin="normal"
@@ -179,6 +204,15 @@ function Login() {
           </Grid>
         </Box>
       </Paper>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={snackbarData.variant}
+          sx={{ width: "100%" }}
+        >
+          {snackbarData.text}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

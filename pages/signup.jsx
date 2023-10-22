@@ -15,7 +15,7 @@ import Container from "@mui/material/Container";
 import Head from "next/head";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Divider, Paper, useTheme } from "@mui/material";
+import { Alert, Divider, Paper, Snackbar, useTheme } from "@mui/material";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -30,6 +30,11 @@ function SignUp() {
   const { userCredentials, setUserCredentials } = useUserStore();
   const googleProvider = new GoogleAuthProvider();
   console.log(userCredentials);
+  const [open, setOpen] = React.useState(false);
+  const [snackbarData, setSnackbarData] = React.useState({
+    variant: null,
+    text: null,
+  });
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First Name is required"),
     lastName: Yup.string().required("Last Name is required"),
@@ -57,24 +62,33 @@ function SignUp() {
       });
       console.log(docRef);
       setUserCredentials(values.firstName, values.lastName, user.uid);
-
+      setOpen(true);
+      setSnackbarData({
+        variant: "success",
+        text: "Signed up Successfully. Redirecting...",
+      });
       resetForm();
     } catch (err) {
+      setOpen(true);
+      setSnackbarData({
+        variant: "error",
+        text: "Something Went Wrong. Check your Info and Try again Later",
+      });
       console.error(err);
     }
   };
 
   const googleSignupHandler = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
-      const firstName = user.displayName.split(' ')[0]
-      const lastName = user.displayName.split(' ')[1]
-      const email = user.email
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const firstName = user.displayName.split(" ")[0];
+      const lastName = user.displayName.split(" ")[1];
+      const email = user.email;
 
-      console.log("firstname", firstName)
-      console.log("lastname", lastName)
-      console.log("email", email)
+      console.log("firstname", firstName);
+      console.log("lastname", lastName);
+      console.log("email", email);
 
       const docRef = await addDoc(collection(firestore, "users"), {
         firstName: firstName,
@@ -85,11 +99,30 @@ function SignUp() {
       console.log(docRef);
 
       setUserCredentials(firstName, lastName, user.uid);
-
+      
+      setOpen(true);
+      setSnackbarData({
+        variant: "success",
+        text: "Signed up Successfully. Redirecting...",
+      });
     } catch (err) {
-      console.error(err)
+      
+      setOpen(false);
+      setSnackbarData({
+        variant: "error",
+        text: "Something Went Wrong. Check your Info and Try again Later",
+      });
+      console.error(err);
     }
-  }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -239,6 +272,15 @@ function SignUp() {
           </Grid>
         </Grid>
       </Paper>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={snackbarData.variant}
+          sx={{ width: "100%" }}
+        >
+          {snackbarData.text}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
