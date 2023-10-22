@@ -1,5 +1,5 @@
 import * as React from "react";
-import { auth } from "@/lib/firebase";
+import { auth, firestore } from "@/lib/firebase";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,13 +15,20 @@ import Container from "@mui/material/Container";
 import Head from "next/head";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useTheme } from "@mui/material";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Divider, Paper, useTheme } from "@mui/material";
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 import useUserStore from "@/stores/userStore";
+import GoogleIcon from "@mui/icons-material/Google";
 
 function SignUp() {
   const theme = useTheme();
   const { userCredentials, setUserCredentials } = useUserStore();
+  const googleProvider = new GoogleAuthProvider();
   console.log(userCredentials);
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First Name is required"),
@@ -41,8 +48,15 @@ function SignUp() {
         values.email,
         values.password
       );
-      const user = userFB.user
-      setUserCredentials(values.firstName, values.lastName, user.uid)
+      const user = userFB.user;
+      const docRef = await addDoc(collection(firestore, "users"), {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        uid: user.uid,
+      });
+      console.log(docRef);
+      setUserCredentials(values.firstName, values.lastName, user.uid);
 
       resetForm();
     } catch (err) {
@@ -50,18 +64,47 @@ function SignUp() {
     }
   };
 
+  const googleSignupHandler = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      const firstName = user.displayName.split(' ')[0]
+      const lastName = user.displayName.split(' ')[1]
+      const email = user.email
+
+      console.log("firstname", firstName)
+      console.log("lastname", lastName)
+      console.log("email", email)
+
+      const docRef = await addDoc(collection(firestore, "users"), {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        uid: user.uid,
+      });
+      console.log(docRef);
+
+      setUserCredentials(firstName, lastName, user.uid);
+
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <Head>
         <title>Job Hub - Sign up</title>
       </Head>
       <CssBaseline />
-      <Box
+      <Paper
+        elevation={1}
         sx={{
           marginTop: 8,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          padding: 4,
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -169,6 +212,25 @@ function SignUp() {
           </Form>
         </Formik>
 
+        <Divider sx={{ fontSize: ".7rem" }}>or</Divider>
+
+        <Button
+          sx={{
+            background: theme.palette.background.paper,
+            color: theme.palette.text.primary,
+            width: "100%",
+            mb: 3,
+            mt: 2,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+          variant="outlined"
+          onClick={googleSignupHandler}
+        >
+          <GoogleIcon fontSize="small" /> Signup With Google
+        </Button>
+
         <Grid container justifyContent="flex-end">
           <Grid item>
             <Link href="/login" variant="body2" sx={{ color: "info.main" }}>
@@ -176,7 +238,7 @@ function SignUp() {
             </Link>
           </Grid>
         </Grid>
-      </Box>
+      </Paper>
     </Container>
   );
 }
