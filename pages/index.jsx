@@ -23,7 +23,7 @@ export default function Home() {
     <>
 
       <DefaultLayout>
-      <main>something</main>
+      <main>HOME PAGE</main>
       </DefaultLayout>
     </>
   );
