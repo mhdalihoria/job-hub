@@ -15,14 +15,21 @@ import Head from "next/head";
 import { Alert, Divider, Paper, Snackbar, useTheme } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth, firestore } from "@/lib/firebase";
 import GoogleIcon from "@mui/icons-material/Google";
+import useUserStore from "@/stores/userStore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 //TODO: Find a way to get logged in user's data (first name, last name, etc) [most likely you'll need firestore]
 function Login() {
   const theme = useTheme();
   const googleProvider = new GoogleAuthProvider();
+  const { userCredentials, setUserCredentials } = useUserStore();
   const [open, setOpen] = React.useState(false);
   const [snackbarData, setSnackbarData] = React.useState({
     variant: null,
@@ -33,19 +40,31 @@ function Login() {
       .required("Email is required")
       .email("Invalid email address"),
     password: Yup.string().required("Password is required"),
+    rememberMe: Yup.boolean(),
   });
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const { email, password } = values;
+      const { email, password, rememberMe } = values;
       const userFB = await signInWithEmailAndPassword(auth, email, password);
-      console.log(userFB);
+      // TODO: Fetch the right document snapshot and assign it to Zustand user store
+      const docRef = doc(firestore, "users", `${userFB.user.uid}`);
+      const docSnap = await getDoc(docRef);
+      console.log(userFB.user.uid);
+      console.log(docSnap.exists());
+
+      if (rememberMe) {
+        localStorage.setItem("user", userFB.user.uid);
+      } else {
+        localStorage.removeItem("user");
+      }
+
       setOpen(true);
       setSnackbarData({
         variant: "success",
         text: "Signed up Successfully. Redirecting...",
       });
-      resetForm();
+      // resetForm();
     } catch (err) {
       setOpen(true);
       setSnackbarData({
@@ -63,13 +82,40 @@ function Login() {
       const firstName = user.displayName.split(" ")[0];
       const lastName = user.displayName.split(" ")[1];
       const email = user.email;
+      const uid = user.uid;
+
+      // Check if a document with the user's UID already exists
+      // Explaining the code below:
+      /*
+      - we mainly need to use the "getDoc" function, but when we use it as is it goes like "sure, i'll bring you a document, where is it though for me to bring it/fetch it"
+      - here where we need the reference, we're telling it, "here's a bridge between you and the exact location of the data we want. Please fetch it"
+      - Or in other words, firestore references act as bookmarks. But bookmarks can exist on empty pages. And only by using getDoc, can you reach to that bookmark and see what that page holds for yourself.
+      */
+      const docRef = doc(firestore, "users", uid);
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        // Create a new document only if it doesn't exist
+        await setDoc(docRef, {
+          firstName,
+          lastName,
+          email,
+          uid,
+        });
+      }
+
+      if (user) {
+        localStorage.setItem("user", uid);
+      } else {
+        localStorage.removeItem("user");
+      }
 
       setOpen(true);
       setSnackbarData({
         variant: "success",
         text: "Signed up Successfully. Redirecting...",
       });
-      setUserCredentials(firstName, lastName, user.uid);
+      setUserCredentials(firstName, lastName, uid);
     } catch (err) {
       setOpen(true);
       setSnackbarData({
@@ -113,6 +159,7 @@ function Login() {
             initialValues={{
               email: "",
               password: "",
+              rememberMe: false,
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -156,10 +203,16 @@ function Login() {
               >
                 <ErrorMessage name="password" />
               </div>
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+
+              <Field name="rememberMe" type="checkbox">
+                {({ field }) => (
+                  <FormControlLabel
+                    control={<Checkbox {...field} color="primary" />}
+                    label="Remember me"
+                  />
+                )}
+              </Field>
+
               <Button
                 type="submit"
                 fullWidth
