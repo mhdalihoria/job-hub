@@ -28,7 +28,6 @@ import GoogleIcon from "@mui/icons-material/Google";
 function SignUp() {
   const theme = useTheme();
   const { userCredentials, setUserCredentials } = useUserStore();
-  const googleProvider = new GoogleAuthProvider();
   console.log(userCredentials);
   const [open, setOpen] = React.useState(false);
   const [snackbarData, setSnackbarData] = React.useState({
@@ -70,49 +69,18 @@ function SignUp() {
       resetForm();
     } catch (err) {
       setOpen(true);
-      setSnackbarData({
-        variant: "error",
-        text: "Something Went Wrong. Check your Info and Try again Later",
-      });
-      console.error(err);
-    }
-  };
-
-  const googleSignupHandler = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const firstName = user.displayName.split(" ")[0];
-      const lastName = user.displayName.split(" ")[1];
-      const email = user.email;
-
-      console.log("firstname", firstName);
-      console.log("lastname", lastName);
-      console.log("email", email);
-
-      const docRef = await addDoc(collection(firestore, "users"), {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        uid: user.uid,
-      });
-      console.log(docRef);
-
-      setUserCredentials(firstName, lastName, user.uid);
-      
-      setOpen(true);
-      setSnackbarData({
-        variant: "success",
-        text: "Signed up Successfully. Redirecting...",
-      });
-    } catch (err) {
-      
-      setOpen(false);
-      setSnackbarData({
-        variant: "error",
-        text: "Something Went Wrong. Check your Info and Try again Later",
-      });
-      console.error(err);
+      if (err.code === "auth/email-already-in-use") {
+        setSnackbarData({
+          variant: "error",
+          text: "Email is already in use. Please use a different email address.",
+        });
+      } else {
+        setSnackbarData({
+          variant: "error",
+          text: "Something Went Wrong. Check your Info and Try again Later",
+        });
+      }
+      console.error(err.message);
     }
   };
 
@@ -244,25 +212,6 @@ function SignUp() {
             </Button>
           </Form>
         </Formik>
-
-        <Divider sx={{ fontSize: ".7rem" }}>or</Divider>
-
-        <Button
-          sx={{
-            background: theme.palette.background.paper,
-            color: theme.palette.text.primary,
-            width: "100%",
-            mb: 3,
-            mt: 2,
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-          }}
-          variant="outlined"
-          onClick={googleSignupHandler}
-        >
-          <GoogleIcon fontSize="small" /> Signup With Google
-        </Button>
 
         <Grid container justifyContent="flex-end">
           <Grid item>
