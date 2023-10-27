@@ -23,13 +23,13 @@ import {
 import { auth, firestore } from "@/lib/firebase";
 import GoogleIcon from "@mui/icons-material/Google";
 import useUserStore from "@/stores/userStore";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 
-//TODO: Find a way to get logged in user's data (first name, last name, etc) [most likely you'll need firestore]
 function Login() {
   const theme = useTheme();
   const googleProvider = new GoogleAuthProvider();
-  const { userCredentials, setUserCredentials } = useUserStore();
+  const { userCredentials, setUserCredentials, userData, setUserData } =
+    useUserStore();
   const [open, setOpen] = React.useState(false);
   const [snackbarData, setSnackbarData] = React.useState({
     variant: null,
@@ -47,11 +47,20 @@ function Login() {
     try {
       const { email, password, rememberMe } = values;
       const userFB = await signInWithEmailAndPassword(auth, email, password);
-      // TODO: Fetch the right document snapshot and assign it to Zustand user store
-      const docRef = doc(firestore, "users", `${userFB.user.uid}`);
+      // The following code means the following:
+      /*
+        - I would like to create a reference (bookmark) to a document that exists in this fireStore instance (first doc parameter)
+        - Which is from this collection (second doc parameter)
+        - And is inside this document (third doc parameter)
+        =====> doc(firestore instance, collection name, document ID) <=====
+        [then we do our operations to the "book page" now that we have access to its "bookmark"]
+      */
+      const docRef = doc(firestore, "users", userFB.user.uid);
       const docSnap = await getDoc(docRef);
-      console.log(userFB.user.uid);
-      console.log(docSnap.exists());
+
+      if (docSnap.exists()) {
+        setUserData(docSnap.data());
+      }
 
       if (rememberMe) {
         localStorage.setItem("user", userFB.user.uid);
@@ -103,6 +112,8 @@ function Login() {
           uid,
         });
       }
+
+      setUserData({ firstName, lastName, email, uid });
 
       if (user) {
         localStorage.setItem("user", uid);
