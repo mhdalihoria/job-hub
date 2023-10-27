@@ -21,14 +21,14 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import useUserStore from "@/stores/userStore";
 import GoogleIcon from "@mui/icons-material/Google";
 
 function SignUp() {
   const theme = useTheme();
-  const { userCredentials, setUserCredentials } = useUserStore();
-  console.log(userCredentials);
+  const { userData, setUserData } = useUserStore();
+  console.log(userData);
   const [open, setOpen] = React.useState(false);
   const [snackbarData, setSnackbarData] = React.useState({
     variant: null,
@@ -53,19 +53,41 @@ function SignUp() {
         values.password
       );
       const user = userFB.user;
-      const docRef = await addDoc(collection(firestore, "users"), {
+
+      /*
+       The following code means: 
+       1- Add me a document to this collection (setDoc's first parameter)
+       2- Which is from this firestore in stance (doc's first parameter)
+       3- And inside the "users" collection (doc's second parameter)
+       4- Since there's a third parameter in our doc function, then lets set the document UID we're making into whatever is in that third parameter (collection's third parameter)
+       5- So, lets add this data to this collection we're making (setDoc's second parameter)
+
+       !!NOTE: setDoc() => is for making documents with a custom document ID
+       !!Meanwhile, addDoc() => is for making documents with an auto generated document ID
+       !!And each have their own way of being done and coded.
+
+       We use a custom document ID here, so when we fetch the information at any point, we simply use our access to the user unique id from auth, to call the document that holds the data about our user(s)
+      */
+      const docRef = await setDoc(doc(firestore, "users", user.uid), {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         uid: user.uid,
       });
-      console.log(docRef);
-      setUserCredentials(values.firstName, values.lastName, user.uid);
+
+      setUserData({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        uid: user.uid,
+        email: values.email,
+      });
+
       setOpen(true);
       setSnackbarData({
         variant: "success",
         text: "Signed up Successfully. Redirecting...",
       });
+      
       resetForm();
     } catch (err) {
       setOpen(true);
