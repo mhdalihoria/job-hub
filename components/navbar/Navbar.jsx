@@ -22,6 +22,7 @@ import { Button } from "@mui/material";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import useThemeStore from "@/stores/themeStore";
 import { useRouter } from "next/router";
+import useUserStore from "@/stores/userStore";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -66,9 +67,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar() {
   const theme = useTheme();
-  const router = useRouter()
+  const router = useRouter();
   const { isLoggedIn } = useAuthStore();
   const { isLightTheme, switchTheme } = useThemeStore();
+  const { userData } = useUserStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -98,7 +100,9 @@ export default function PrimarySearchAppBar() {
         color: theme.palette.primary.contrastText,
         marginLeft: "10px",
       }}
-      onClick={()=>{router.push('/login')}}
+      onClick={() => {
+        router.push("/login");
+      }}
     >
       Login
     </Button>
@@ -111,8 +115,9 @@ export default function PrimarySearchAppBar() {
         color: theme.palette.secondary.contrastText,
         marginLeft: "10px",
       }}
-      onClick={()=>{router.push('/signup')}}
-
+      onClick={() => {
+        router.push("/signup");
+      }}
     >
       Signup
     </Button>
@@ -202,7 +207,17 @@ export default function PrimarySearchAppBar() {
               aria-haspopup="true"
               color="inherit"
             >
-              <AccountCircle />
+              {!userData.profileImg ? (
+                <AccountCircle />
+              ) : (
+                <Image
+                  src={userData.profileImg}
+                  height={30}
+                  width={30}
+                  alt="profile-picture"
+                  style={{ borderRadius: "100px" }}
+                />
+              )}
             </IconButton>
             <p>Profile</p>
           </MenuItem>
@@ -229,7 +244,7 @@ export default function PrimarySearchAppBar() {
         }}
         sx={{ paddingTop: { xs: ".5rem", sm: ".3rem" } }}
       >
-        <Toolbar>
+        <Toolbar sx={{ width: "90%", margin: "0 auto" }}>
           {/* <IconButton
             size="large"
             edge="start"
@@ -252,7 +267,12 @@ export default function PrimarySearchAppBar() {
             />
           </Search> */}
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: {md: "center"} }}>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: { md: "center" },
+            }}
+          >
             {isLoggedIn ? (
               <>
                 <IconButton
@@ -282,7 +302,18 @@ export default function PrimarySearchAppBar() {
                   onClick={handleProfileMenuOpen}
                   color="inherit"
                 >
-                  <AccountCircle />
+                  {/* <AccountCircle /> */}
+                  {!userData.profileImg ? (
+                    <AccountCircle />
+                  ) : (
+                    <Image
+                      src={userData.profileImg}
+                      height={40}
+                      width={40}
+                      alt="profile-picture"
+                      style={{ borderRadius: "100px" }}
+                    />
+                  )}
                 </IconButton>
               </>
             ) : (
