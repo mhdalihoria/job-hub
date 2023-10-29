@@ -24,9 +24,11 @@ import { auth, firestore } from "@/lib/firebase";
 import GoogleIcon from "@mui/icons-material/Google";
 import useUserStore from "@/stores/userStore";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
 
 function Login() {
   const theme = useTheme();
+  const router = useRouter()
   const googleProvider = new GoogleAuthProvider();
   const { userCredentials, setUserCredentials, userData, setUserData } =
     useUserStore();
@@ -73,7 +75,12 @@ function Login() {
         variant: "success",
         text: "Signed up Successfully. Redirecting...",
       });
-      // resetForm();
+
+      setTimeout(()=> {
+        router.push("/")
+      }, 3000)
+
+      resetForm();
     } catch (err) {
       setOpen(true);
       setSnackbarData({
@@ -127,6 +134,11 @@ function Login() {
         text: "Signed up Successfully. Redirecting...",
       });
       setUserCredentials(firstName, lastName, uid);
+
+      setTimeout(()=> {
+        router.push("/")
+      }, 3000)
+      
     } catch (err) {
       setOpen(true);
       setSnackbarData({
