@@ -34,9 +34,11 @@ const Footer = () => {
   return (
     <footer>
       <StyledFooter islighttheme={isLightTheme ? 1 : 0}>
-        <Container
+        <Box
           sx={{
             p: "1rem",
+            width: "90%", 
+            margin: "0 auto"
           }}
         >
           <Box py={10} overflow="hidden">
@@ -126,7 +128,7 @@ const Footer = () => {
               </Grid>
             </Grid>
           </Box>
-        </Container>
+        </Box>
       </StyledFooter>
     </footer>
   );
