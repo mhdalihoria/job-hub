@@ -64,7 +64,7 @@ function Login() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setUserData(docSnap.data());
+        setUserData({ ...docSnap.data(), profileImg: null });
         login();
       }
 
@@ -103,7 +103,7 @@ function Login() {
       const lastName = user.displayName.split(" ")[1];
       const email = user.email;
       const uid = user.uid;
-      const profileImg = user.photoURL
+      const profileImg = user.photoURL;
 
       // Check if a document with the user's UID already exists
       // Explaining the code below:
@@ -122,7 +122,7 @@ function Login() {
           lastName,
           email,
           uid,
-          profileImg
+          profileImg,
         });
       }
 
