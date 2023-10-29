@@ -24,11 +24,11 @@ import {
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import useUserStore from "@/stores/userStore";
 import GoogleIcon from "@mui/icons-material/Google";
+import { useRouter } from "next/router";
 
 function SignUp() {
   const theme = useTheme();
-  const { userData, setUserData } = useUserStore();
-  console.log(userData);
+  const router = useRouter()
   const [open, setOpen] = React.useState(false);
   const [snackbarData, setSnackbarData] = React.useState({
     variant: null,
@@ -75,18 +75,15 @@ function SignUp() {
         uid: user.uid,
       });
 
-      setUserData({
-        firstName: values.firstName,
-        lastName: values.lastName,
-        uid: user.uid,
-        email: values.email,
-      });
-
       setOpen(true);
       setSnackbarData({
         variant: "success",
         text: "Signed up Successfully. Redirecting...",
       });
+
+      setTimeout(()=>{
+        router.push("/login")
+      }, 3000)
       
       resetForm();
     } catch (err) {
