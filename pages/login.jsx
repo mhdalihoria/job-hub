@@ -25,13 +25,16 @@ import GoogleIcon from "@mui/icons-material/Google";
 import useUserStore from "@/stores/userStore";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
+import useAuthStore from "@/stores/authStore";
 
 function Login() {
   const theme = useTheme();
-  const router = useRouter()
+  const router = useRouter();
   const googleProvider = new GoogleAuthProvider();
   const { userCredentials, setUserCredentials, userData, setUserData } =
     useUserStore();
+  const { login } = useAuthStore();
+
   const [open, setOpen] = React.useState(false);
   const [snackbarData, setSnackbarData] = React.useState({
     variant: null,
@@ -62,6 +65,7 @@ function Login() {
 
       if (docSnap.exists()) {
         setUserData(docSnap.data());
+        login();
       }
 
       if (rememberMe) {
@@ -76,9 +80,9 @@ function Login() {
         text: "Signed up Successfully. Redirecting...",
       });
 
-      setTimeout(()=> {
-        router.push("/")
-      }, 3000)
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
 
       resetForm();
     } catch (err) {
@@ -99,6 +103,7 @@ function Login() {
       const lastName = user.displayName.split(" ")[1];
       const email = user.email;
       const uid = user.uid;
+      const profileImg = user.photoURL
 
       // Check if a document with the user's UID already exists
       // Explaining the code below:
@@ -117,10 +122,12 @@ function Login() {
           lastName,
           email,
           uid,
+          profileImg
         });
       }
 
-      setUserData({ firstName, lastName, email, uid });
+      setUserData({ firstName, lastName, email, uid, profileImg });
+      login();
 
       if (user) {
         localStorage.setItem("user", uid);
@@ -135,10 +142,9 @@ function Login() {
       });
       setUserCredentials(firstName, lastName, uid);
 
-      setTimeout(()=> {
-        router.push("/")
-      }, 3000)
-      
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
     } catch (err) {
       setOpen(true);
       setSnackbarData({
