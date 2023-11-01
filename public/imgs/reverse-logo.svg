@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="353" viewBox="0 0 1080 353">
-  <g id="Group_1" data-name="Group 1" transform="translate(248 -94.512)">
-    <path id="Rectangle_1" data-name="Rectangle 1" d="M15,0H532a0,0,0,0,1,0,0V297a0,0,0,0,1,0,0H15A15,15,0,0,1,0,282V15A15,15,0,0,1,15,0Z" transform="translate(-232 122.512)" fill="#fff"/>
-    <path id="Rectangle_1-2" data-name="Rectangle 1" d="M0,0H517a15,15,0,0,1,15,15V283a15,15,0,0,1-15,15H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(300 122.512)" fill="#003a9b"/>
-    <text id="HUB" transform="translate(383 345.512)" fill="#fff" font-size="179" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">HUB</tspan></text>
-    <rect id="Rectangle_2" data-name="Rectangle 2" width="1064" height="353" transform="translate(-248 94.512)" fill="none"/>
-    <text id="JOB" transform="translate(-122 340.512)" fill="#003a9b" font-size="169" font-family="SegoeUI-Bold, Segoe UI" font-weight="700"><tspan x="0" y="0">JOB</tspan></text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1064" height="353" viewBox="0 0 1064 353">
+  <g id="Group_1" data-name="Group 1" transform="translate(-202 -312.512)">
+    <path id="Rectangle_1" data-name="Rectangle 1" d="M15,0H460c8.284,0,15,6.009,15,13.421V284.515c0,7.412-6.716,13.421-15,13.421H15c-8.284,0-15-6.009-15-13.421V13.421C0,6.009,6.716,0,15,0Z" transform="translate(748.5 340.044)" fill="#003a9b"/>
+    <rect id="Rectangle_2" data-name="Rectangle 2" width="1064" height="353" transform="translate(202 312.512)" fill="none"/>
+    <path id="Rectangle_1-2" data-name="Rectangle 1" d="M15,0H460c8.284,0,15,6.009,15,13.421V284.515c0,7.412-6.716,13.421-15,13.421H15c-8.284,0-15-6.009-15-13.421V13.421C0,6.009,6.716,0,15,0Z" transform="translate(275 339.841)" fill="#fff"/>
+    <text id="JOB" transform="translate(357 558.512)" fill="#003a9b" font-size="169" font-family="SegoeUI-Bold, Segoe UI" font-weight="700"><tspan x="0" y="0">JOB</tspan></text>
+    <text id="HUB" transform="translate(803 555.512)" fill="#fff" font-size="179" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">HUB</tspan></text>
   </g>
 </svg>

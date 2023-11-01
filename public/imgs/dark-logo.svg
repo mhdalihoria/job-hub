@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1064" height="353" viewBox="0 0 1064 353">
+  <g id="Group_1" data-name="Group 1" transform="translate(-202 -312.512)">
+    <rect id="Rectangle_1" data-name="Rectangle 1" width="532" height="298" transform="translate(734 339.512)" fill="rgba(47,47,47,0)"/>
+    <text id="HUB" transform="translate(804 563.512)" fill="#fff" font-size="179" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">HUB</tspan></text>
+    <rect id="Rectangle_2" data-name="Rectangle 2" width="1064" height="353" transform="translate(202 312.512)" fill="none"/>
+    <path id="Rectangle_1-2" data-name="Rectangle 1" d="M15,0H460c8.284,0,15,6.009,15,13.421V284.515c0,7.412-6.716,13.421-15,13.421H15c-8.284,0-15-6.009-15-13.421V13.421C0,6.009,6.716,0,15,0Z" transform="translate(275 339.841)" fill="#fff"/>
+    <text id="JOB" transform="translate(357 558.512)" fill="#2f2f2f" font-size="169" font-family="SegoeUI-Bold, Segoe UI" font-weight="700"><tspan x="0" y="0">JOB</tspan></text>
+  </g>
+</svg>
