@@ -6,14 +6,16 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { firestore } from "@/lib/firebase";
 import { collection, query, where } from "firebase/firestore";
-import DefaultLayout from "@/layouts/DefaultLayout"
-
+import DefaultLayout from "@/layouts/DefaultLayout";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 //----------------------------------------------------------
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const theme = useTheme();
+  const {t} = useTranslation()
   // const [value, loading, error] = useCollection(
   //   query(collection(firestore, "posts"))
   // );
@@ -21,10 +23,19 @@ export default function Home() {
   // console.log(!loading && value.docs.map((doc) => doc.data()));
   return (
     <>
-
       <DefaultLayout>
-      <main>HOME PAGE</main>
+        <main>HOME PAGE</main>
+        <main>{t("hello")}</main>
       </DefaultLayout>
     </>
   );
+}
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
