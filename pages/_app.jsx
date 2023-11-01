@@ -10,13 +10,14 @@ import { doc, getDoc } from "firebase/firestore";
 import FullPageLoader from "@/components/loader/FullPageLoader";
 import useAuthStore from "@/stores/authStore";
 import { onAuthStateChanged } from "firebase/auth";
+import { appWithTranslation } from "next-i18next";
 
-export default function App({ Component, pageProps }) {
+const App = ({ Component, pageProps }) => {
   const { isLightTheme } = useThemeStore();
   const theme = isLightTheme ? lightTheme : darkTheme;
   const { userData, setUserData, resetUserData } = useUserStore();
   const { isPageLoading, setIsPageLoading } = useLoaderStore();
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isLoggedIn, logout, login } = useAuthStore();
   console.log(userData);
 
   useEffect(() => {
@@ -68,14 +69,20 @@ export default function App({ Component, pageProps }) {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
+        const firstName = user.displayName;
+        const lastName = user.displayName;
+        const email = user.email;
         const uid = user.uid;
-        console.log("from _app, user logged in")
+        const profileImg = user.photoURL;
+        setUserData({ firstName, lastName, email, uid, profileImg });
+        login();
+        console.log("from _app, user logged in", user.displayName);
         // ...
       } else {
         logout();
         resetUserData();
         window.localStorage.removeItem("user");
-        console.log("from _app, user logged out")
+        console.log("from _app, user logged out");
         // User is signed out
         // ...
       }
@@ -92,4 +99,6 @@ export default function App({ Component, pageProps }) {
       <Component {...pageProps} />
     </ThemeProvider>
   );
-}
+};
+
+export default appWithTranslation(App);
