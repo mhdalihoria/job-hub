@@ -5,17 +5,18 @@ import useThemeStore from "@/stores/themeStore";
 import useUserStore from "@/stores/userStore";
 import useLoaderStore from "@/stores/loaderStore";
 import { useEffect, useState } from "react";
-import { firestore } from "@/lib/firebase";
+import { auth, firestore } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import FullPageLoader from "@/components/loader/FullPageLoader";
 import useAuthStore from "@/stores/authStore";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function App({ Component, pageProps }) {
   const { isLightTheme } = useThemeStore();
   const theme = isLightTheme ? lightTheme : darkTheme;
-  const { userData, setUserData } = useUserStore();
+  const { userData, setUserData, resetUserData } = useUserStore();
   const { isPageLoading, setIsPageLoading } = useLoaderStore();
-  const { login } = useAuthStore();
+  const { isLoggedIn, logout } = useAuthStore();
   console.log(userData);
 
   useEffect(() => {
@@ -60,6 +61,29 @@ export default function App({ Component, pageProps }) {
         setIsPageLoading(false);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const uid = user.uid;
+        console.log("from _app, user logged in")
+        // ...
+      } else {
+        logout();
+        resetUserData();
+        window.localStorage.removeItem("user");
+        console.log("from _app, user logged out")
+        // User is signed out
+        // ...
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
