@@ -23,6 +23,8 @@ import { DarkMode, LightMode } from "@mui/icons-material";
 import useThemeStore from "@/stores/themeStore";
 import { useRouter } from "next/router";
 import useUserStore from "@/stores/userStore";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -93,6 +95,11 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleLogOut = () => {
+    signOut(auth)
+    handleMenuClose()
+  };
+
   const loginButton = (
     <Button
       sx={{
@@ -153,6 +160,7 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
     </Menu>
   );
 
