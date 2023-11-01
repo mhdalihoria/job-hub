@@ -18,7 +18,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import Logo from "@/public/imgs/logo.svg";
 import Image from "next/image";
 import useAuthStore from "@/stores/authStore";
-import { Button } from "@mui/material";
+import { Button, Select } from "@mui/material";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import useThemeStore from "@/stores/themeStore";
 import { useRouter } from "next/router";
@@ -70,6 +70,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function PrimarySearchAppBar() {
   const theme = useTheme();
   const router = useRouter();
+  const { pathname, asPath, query, locale } = router;
   const { isLoggedIn } = useAuthStore();
   const { isLightTheme, switchTheme } = useThemeStore();
   const { userData } = useUserStore();
@@ -96,8 +97,15 @@ export default function PrimarySearchAppBar() {
   };
 
   const handleLogOut = () => {
-    signOut(auth)
-    handleMenuClose()
+    signOut(auth);
+    handleMenuClose();
+  };
+
+  const handleLanguageChange = (e) => {
+    const { value } = e.target;
+    router.push({ pathname, query }, asPath, {
+      locale: value,
+    });
   };
 
   const loginButton = (
@@ -237,6 +245,22 @@ export default function PrimarySearchAppBar() {
           <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
             {themeSwitch}
           </MenuItem>
+          <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
+          <Select
+              labelId="select"
+              id="select"
+              onChange={handleLanguageChange}
+              autoWidth
+              value={locale}
+              sx={{
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": { border: 0 },
+              }}
+            >
+              <MenuItem value={"en"}>EN</MenuItem>
+              <MenuItem value={"ar"}>AR</MenuItem>
+            </Select>
+          </MenuItem>
         </Box>
       )}
     </Menu>
@@ -281,6 +305,21 @@ export default function PrimarySearchAppBar() {
               alignItems: { md: "center" },
             }}
           >
+            <Select
+              labelId="select"
+              id="select"
+              onChange={handleLanguageChange}
+              autoWidth
+              value={locale}
+              sx={{
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": { border: 0 },
+              }}
+            >
+              <MenuItem value={"en"}>EN</MenuItem>
+              <MenuItem value={"ar"}>AR</MenuItem>
+            </Select>
+
             {isLoggedIn ? (
               <>
                 <IconButton
