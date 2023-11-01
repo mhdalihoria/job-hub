@@ -237,6 +237,22 @@ export default function PrimarySearchAppBar() {
             </IconButton>
             <p>Profile</p>
           </MenuItem>
+          <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
+          <Select
+              labelId="select"
+              id="select"
+              onChange={handleLanguageChange}
+              autoWidth
+              value={locale}
+              sx={{
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": { border: 0 },
+              }}
+            >
+              <MenuItem value={"en"}>EN</MenuItem>
+              <MenuItem value={"ar"}>AR</MenuItem>
+            </Select>
+          </MenuItem>
         </Box>
       ) : (
         <Box>
