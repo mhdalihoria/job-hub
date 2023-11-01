@@ -45,12 +45,11 @@ function Login() {
       .required("Email is required")
       .email("Invalid email address"),
     password: Yup.string().required("Password is required"),
-    rememberMe: Yup.boolean(),
   });
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const { email, password, rememberMe } = values;
+      const { email, password } = values;
       const userFB = await signInWithEmailAndPassword(auth, email, password);
       // The following code means the following:
       /*
@@ -64,14 +63,8 @@ function Login() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setUserData({ ...docSnap.data(), profileImg: null });
-        login();
-      }
-
-      if (rememberMe) {
-        localStorage.setItem("user", userFB.user.uid);
-      } else {
-        localStorage.removeItem("user");
+        // setUserData({ ...docSnap.data(), profileImg: null });
+        // login();
       }
 
       setOpen(true);
@@ -124,15 +117,6 @@ function Login() {
           uid,
           profileImg,
         });
-      }
-
-      setUserData({ firstName, lastName, email, uid, profileImg });
-      login();
-
-      if (user) {
-        localStorage.setItem("user", uid);
-      } else {
-        localStorage.removeItem("user");
       }
 
       setOpen(true);
@@ -188,7 +172,6 @@ function Login() {
             initialValues={{
               email: "",
               password: "",
-              rememberMe: false,
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -232,15 +215,6 @@ function Login() {
               >
                 <ErrorMessage name="password" />
               </div>
-
-              <Field name="rememberMe" type="checkbox">
-                {({ field }) => (
-                  <FormControlLabel
-                    control={<Checkbox {...field} color="primary" />}
-                    label="Remember me"
-                  />
-                )}
-              </Field>
 
               <Button
                 type="submit"
