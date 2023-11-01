@@ -2,6 +2,7 @@
 import { Box, Container, Grid, styled } from "@mui/material";
 import Image from "next/image";
 import Logo from "@/public/imgs/reverse-logo.svg";
+import darkLogo from "@/public/imgs/dark-logo.svg";
 import Link from "next/link";
 import useThemeStore from "@/stores/themeStore";
 
@@ -45,7 +46,7 @@ const Footer = () => {
             <Grid container spacing={3}>
               <Grid item lg={4} md={6} sm={6} xs={12}>
                 <Link href="/">
-                  <Image src={Logo} alt="logo" width={120} height={50} />
+                  <Image src={isLightTheme ? Logo : darkLogo} alt="logo" width={120} height={50} />
                 </Link>
 
                 <p>

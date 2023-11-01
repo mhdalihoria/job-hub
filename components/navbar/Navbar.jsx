@@ -16,6 +16,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import Logo from "@/public/imgs/logo.svg";
+import darkLogo from "@/public/imgs/dark-logo.svg";
 import Image from "next/image";
 import useAuthStore from "@/stores/authStore";
 import { Button, Select } from "@mui/material";
@@ -303,7 +304,7 @@ export default function PrimarySearchAppBar() {
             <MenuIcon />
           </IconButton> */}
           <Typography variant="h6" noWrap component="div">
-            <Image src={Logo} alt="logo" width={150} height={50} />
+            <Image src={isLightTheme ? Logo : darkLogo} alt="logo" width={150} height={50} />
           </Typography>
           {/* <Search>
             <SearchIconWrapper>
