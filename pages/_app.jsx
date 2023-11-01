@@ -21,71 +21,42 @@ const App = ({ Component, pageProps }) => {
   console.log(userData);
 
   useEffect(() => {
-    setIsPageLoading(true);
-
-    const fetchUserDataFromFirestore = async (userUID) => {
-      try {
-        const docRef = doc(firestore, "users", userUID);
-        const userDocSnap = await getDoc(docRef);
-
-        if (userDocSnap.exists()) {
-          // User data exists; return it
-          console.log(userDocSnap.data());
-
-          setUserData(userDocSnap.data());
-          login();
-          setIsPageLoading(false);
-        } else {
-          setIsPageLoading(false);
-          // Handle the case where the user document doesn't exist
-          return null;
-        }
-      } catch (error) {
-        // Handle any potential errors here
-        console.error("Error fetching user data:", error);
-        throw error;
-      }
-    };
-
-    //------------------------------------------------------
-
-    // If there's no userData means user is either not logged in, or doesn't have an account. So we figure out which
-    if (Object.keys(userData).length === 0) {
-      //Object.keys here is used to check for content of userData object without comparing the value, but by reference, like how objects should be compared as
-      //  Fetch UID from localStorage to see if user is logged in before and selected the "remember me" option
-      const storedID = window.localStorage.getItem("user")
-        ? window.localStorage.getItem("user")
-        : null;
-      if (storedID) {
-        fetchUserDataFromFirestore(storedID);
-      } else {
-        setIsPageLoading(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setIsPageLoading(true);
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
+        // User is signed in
         const firstName = user.displayName;
         const lastName = user.displayName;
         const email = user.email;
         const uid = user.uid;
         const profileImg = user.photoURL;
-        setUserData({ firstName, lastName, email, uid, profileImg });
         login();
         console.log("from _app, user logged in", user.displayName);
-        // ...
+
+        try {
+          const docRef = doc(firestore, "users", uid);
+          const userDocSnap = await getDoc(docRef);
+
+          if (userDocSnap.exists()) {
+            // User data exists; return it
+            console.log(userDocSnap.data());
+            setUserData({...userDocSnap.data()});
+          } else {
+            // setUserData({ firstName, lastName, email, uid, profileImg });
+            return null;
+          }
+        } catch (error) {
+          // Handle any potential errors here
+          console.error("Error fetching user data:", error);
+          throw error;
+        }
       } else {
+        // User is signed out
         logout();
         resetUserData();
-        window.localStorage.removeItem("user");
         console.log("from _app, user logged out");
-        // User is signed out
-        // ...
       }
+      setIsPageLoading(false);
     });
 
     return () => {
