@@ -84,6 +84,14 @@ export default function PrimarySearchAppBar() {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleProfileRedirect = (event) => {
+    if (!!userData.isUserInfoComplete) {
+      router.push("/profile");
+    } else {
+      router.push("/profile-edit");
+    }
+  };
+
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -150,6 +158,23 @@ export default function PrimarySearchAppBar() {
     </IconButton>
   );
 
+  const languageSelect = (
+    <Select
+      labelId="select"
+      id="select"
+      onChange={handleLanguageChange}
+      autoWidth
+      value={locale}
+      sx={{
+        boxShadow: "none",
+        ".MuiOutlinedInput-notchedOutline": { border: 0 },
+      }}
+    >
+      <MenuItem value={"en"}>EN</MenuItem>
+      <MenuItem value={"ar"}>AR</MenuItem>
+    </Select>
+  );
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -167,8 +192,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
+      {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
       <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
     </Menu>
   );
@@ -239,20 +264,10 @@ export default function PrimarySearchAppBar() {
             <p>Profile</p>
           </MenuItem>
           <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
-          <Select
-              labelId="select"
-              id="select"
-              onChange={handleLanguageChange}
-              autoWidth
-              value={locale}
-              sx={{
-                boxShadow: "none",
-                ".MuiOutlinedInput-notchedOutline": { border: 0 },
-              }}
-            >
-              <MenuItem value={"en"}>EN</MenuItem>
-              <MenuItem value={"ar"}>AR</MenuItem>
-            </Select>
+            {themeSwitch}
+          </MenuItem>
+          <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
+            {languageSelect}
           </MenuItem>
         </Box>
       ) : (
@@ -263,7 +278,7 @@ export default function PrimarySearchAppBar() {
             {themeSwitch}
           </MenuItem>
           <MenuItem sx={{ display: "flex", justifyContent: "center" }}>
-          <Select
+            <Select
               labelId="select"
               id="select"
               onChange={handleLanguageChange}
@@ -284,7 +299,7 @@ export default function PrimarySearchAppBar() {
   );
 
   return (
-    <Box>
+    <Box style={{ backgroundColor: theme.palette.background.default }}>
       <AppBar
         position="sticky"
         style={{
@@ -304,7 +319,12 @@ export default function PrimarySearchAppBar() {
             <MenuIcon />
           </IconButton> */}
           <Typography variant="h6" noWrap component="div">
-            <Image src={isLightTheme ? Logo : darkLogo} alt="logo" width={150} height={50} />
+            <Image
+              src={isLightTheme ? Logo : darkLogo}
+              alt="logo"
+              width={150}
+              height={50}
+            />
           </Typography>
           {/* <Search>
             <SearchIconWrapper>
@@ -322,23 +342,11 @@ export default function PrimarySearchAppBar() {
               alignItems: { md: "center" },
             }}
           >
-            <Select
-              labelId="select"
-              id="select"
-              onChange={handleLanguageChange}
-              autoWidth
-              value={locale}
-              sx={{
-                boxShadow: "none",
-                ".MuiOutlinedInput-notchedOutline": { border: 0 },
-              }}
-            >
-              <MenuItem value={"en"}>EN</MenuItem>
-              <MenuItem value={"ar"}>AR</MenuItem>
-            </Select>
+            {languageSelect}
 
             {isLoggedIn ? (
               <>
+                {themeSwitch}
                 <IconButton
                   size="large"
                   aria-label="show 4 new mails"
