@@ -15,7 +15,9 @@ import {
   MenuItem,
   FormControl,
   Select,
+  Box,
 } from "@mui/material";
+import Step1 from "@/components/profile-edit/step-one/Step1";
 
 const FormContainerStyled = styled("div")(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -27,7 +29,7 @@ const PaperStyled = styled(Paper)(({ theme }) => ({
   margin: "0rem auto",
 }));
 
-const FormStyled = styled(Form)(({ theme }) => ({
+const FormStyled = styled(Box)(({ theme }) => ({
   padding: "2rem 1rem",
 }));
 
@@ -50,7 +52,8 @@ const validationSchema = [
 const ProfileForm = () => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
-
+  const [formData, setFormData] = React.useState(null);
+  console.log(formData);
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -74,7 +77,7 @@ const ProfileForm = () => {
     <DefaultLayout>
       <FormContainerStyled>
         <PaperStyled elevation={1}>
-          <Formik
+          {/* <Formik
             initialValues={{
               userType: "",
               name: "",
@@ -83,61 +86,67 @@ const ProfileForm = () => {
             }}
             validationSchema={validationSchema[activeStep]}
             onSubmit={handleSubmit}
-          >
-            <FormStyled>
-              <Stepper activeStep={activeStep} alternativeLabel>
-                {steps.map((label) => (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-              <div>
-                {activeStep === 0 && (
-                  <div>
-                    <Field
-                      name="userType"
-                      as={FormControl}
-                      variant="outlined"
-                      fullWidth
-                    >
-                      <InputLabel>Who Are You?</InputLabel>
-                      <Field as={Select} name="userType" id="userType">
-                        <MenuItem
-                          value="jobSeeker"
-                          id="jobSeekerOption"
-                          name="jobSeekerOption"
-                        >
-                          Job Seeker
-                        </MenuItem>
-                        <MenuItem
-                          value="employer"
-                          id="employerOption"
-                          name="employerOption"
-                        >
-                          Employer
-                        </MenuItem>
-                      </Field>
-                    </Field>
+          >*/}
+          <FormStyled>
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <div>
+              {activeStep === 0 && (
+                // <div>
+                //   <Field
+                //     name="userType"
+                //     as={FormControl}
+                //     variant="outlined"
+                //     fullWidth
+                //   >
+                //     <InputLabel>Who Are You?</InputLabel>
+                //     <Field as={Select} name="userType" id="userType">
+                //       <MenuItem
+                //         value="jobSeeker"
+                //         id="jobSeekerOption"
+                //         name="jobSeekerOption"
+                //       >
+                //         Job Seeker
+                //       </MenuItem>
+                //       <MenuItem
+                //         value="employer"
+                //         id="employerOption"
+                //         name="employerOption"
+                //       >
+                //         Employer
+                //       </MenuItem>
+                //     </Field>
+                //   </Field>
 
-                    <ErrorMessage name="userType" component="div" />
-                  </div>
-                )}
+                //   <ErrorMessage name="userType" component="div" />
+                // </div>
+                <Step1
+                  setFormData={setFormData}
+                  activeStep={activeStep}
+                  handleBack={handleBack}
+                  isLastStep={isLastStep}
+                />
+              )}
 
-                {activeStep === 1 && (
-                  <div>
-                    <Field
+              {activeStep === 1 && (
+                <div>
+                  {/* <Field
                       name="email"
                       as={TextField}
                       label="Email"
                       fullWidth
                     />
-                    <ErrorMessage name="email" component="div" />
-                  </div>
-                )}
-                {/* Add fields for the third step */}
-              </div>
-              <div>
+                    <ErrorMessage name="email" component="div" /> */}
+                </div>
+              )}
+              {/* Add fields for the third step */}
+            </div>
+            {/* <div>
                 <Button
                   disabled={activeStep === 0}
                   onClick={handleBack}
@@ -148,9 +157,9 @@ const ProfileForm = () => {
                 <Button type="submit" variant="contained" color="primary">
                   {isLastStep ? "Submit" : "Next"}
                 </Button>
-              </div>
-            </FormStyled>
-          </Formik>
+              </div> */}
+          </FormStyled>
+          {/* </Formik> */}
         </PaperStyled>
       </FormContainerStyled>
     </DefaultLayout>
