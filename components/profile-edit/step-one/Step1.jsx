@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  ErrorMessage,
-  Field,
-  Form,
-  Formik,
-} from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import {
   Button,
@@ -157,28 +152,34 @@ const StepOne = ({
 
           <div>
             <Field name="profileImage">
-              {(props) => {
-                const { field, form } = props;
-
-                console.log(form.values);
-                console.log(field);
+              {({ field, form }) => {
+                console.log(form.values)
                 return (
-                  <>
-                    {field.value && (
-                      <Image src={field.value} width={75} height={75} alt="uploaded picture"/>
-                    )}
-                    <input
-                      type="file"
-                      accept={`image/${validFileExtensions.profileImage.join(
-                        ", image/"
-                      )}`}
-                      id="profileImage"
-                      {...field}
-                    />
-                  </>
-                );
+                  <label htmlFor="profileImage">
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{ color: "white" }}
+                  >
+                    Upload Profile Picture
+                  </Button>
+                  <input
+                    type="file"
+                    accept=".jpg, .jpeg, .png"
+                    id="profileImage"
+                    style={{ display: "none" }}
+                    onChange={(event) => {
+                      form.setFieldValue(
+                        "profileImage",
+                        event.currentTarget.files[0]
+                      );
+                    }}
+                  />
+                </label>
+                )
               }}
             </Field>
+
             <ErrorMessage
               name="profileImage"
               component="div"
