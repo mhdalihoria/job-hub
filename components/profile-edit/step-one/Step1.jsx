@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import {
@@ -47,6 +47,25 @@ const StepOne = ({
   setFormData,
 }) => {
   // console.log(defaultUser);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageChange = (e, setFieldValue) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      setFieldValue("profileImage", file);
+
+      // Use FileReader to preview the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
   const handleSubmit = (values) => {
     console.log(values);
     setFormData((oldData) => ({ ...oldData, ...values }));
@@ -153,30 +172,42 @@ const StepOne = ({
           <div>
             <Field name="profileImage">
               {({ field, form }) => {
-                console.log(form.values)
+                console.log(form.values);
                 return (
-                  <label htmlFor="profileImage">
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    sx={{ color: "white" }}
-                  >
-                    Upload Profile Picture
-                  </Button>
-                  <input
-                    type="file"
-                    accept=".jpg, .jpeg, .png"
-                    id="profileImage"
-                    style={{ display: "none" }}
-                    onChange={(event) => {
-                      form.setFieldValue(
-                        "profileImage",
-                        event.currentTarget.files[0]
-                      );
-                    }}
-                  />
-                </label>
-                )
+                  <div>
+                    <label htmlFor="profileImage">
+                      <Button
+                        variant="outlined"
+                        component="span"
+                        sx={{ color: "white" }}
+                      >
+                        Upload Profile Picture
+                      </Button>
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        id="profileImage"
+                        style={{ display: "none" }}
+                        onChange={(event) => {
+                          // form.setFieldValue(
+                          //   "profileImage",
+                          //   event.currentTarget.files[0]
+                          // );
+                          handleImageChange(event, form.setFieldValue);
+                        }}
+                      />
+                    </label>
+                    {imagePreview && (
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        style={{ maxWidth: "100%", marginTop: "10px" }}
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                  </div>
+                );
               }}
             </Field>
 
