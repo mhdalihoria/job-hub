@@ -129,6 +129,7 @@ const ProfileForm = () => {
                   setFormData={setFormData}
                   activeStep={activeStep}
                   handleBack={handleBack}
+                  handleNext={handleNext}
                   isLastStep={isLastStep}
                 />
               )}
