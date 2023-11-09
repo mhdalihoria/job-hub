@@ -18,7 +18,8 @@ const App = ({ Component, pageProps }) => {
   const { userData, setUserData, resetUserData } = useUserStore();
   const { isPageLoading, setIsPageLoading } = useLoaderStore();
   const { isLoggedIn, logout, login } = useAuthStore();
-  console.log(userData);
+  console.log("userData Store", userData);
+  console.log("UserInfoComplete", !!userData.isUserInfoComplete);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
