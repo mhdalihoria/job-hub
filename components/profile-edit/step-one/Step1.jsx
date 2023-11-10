@@ -6,6 +6,7 @@ import {
   ButtonBase,
   FormControl,
   FormHelperText,
+  Grid,
   Input,
   InputAdornment,
   InputLabel,
@@ -14,14 +15,17 @@ import {
   TextField,
   Typography,
   styled,
+  useTheme,
 } from "@mui/material";
 import defaultUser from "@/public/imgs/default-user.png";
 import Image from "next/image";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import LanguageIcon from "@mui/icons-material/Language";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 //----------------------------------------------------------
-const MAX_FILE_SIZE = 819200; //800KB
+const MAX_FILE_SIZE = 512000; //500KB
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -35,15 +39,15 @@ const validationSchema = Yup.object().shape({
   // links: Yup.string().required("Please Provide your Link(s)"),
   socialMedia: Yup.array().of(
     Yup.object().shape({
-      platform: Yup.string().required("Select a social media platform"),
-      value: Yup.string().required("Enter a value"),
+      platform: Yup.string().required("Required"),
+      value: Yup.string().required("Enter Your Link"),
     })
   ),
   profileImage: Yup.mixed()
     .required("Required")
     .test(
       "is-valid-size",
-      "Max allowed size is 800KB",
+      "Max allowed size is 500KB",
       (value) => value && value.size <= MAX_FILE_SIZE
     ),
 });
@@ -67,6 +71,15 @@ const StepOne = ({
   setFormData,
 }) => {
   // console.log(defaultUser);
+  const theme = useTheme();
+  const isLightTheme = theme.palette.mode === "light";
+  const themeBasedColor = isLightTheme
+    ? theme.palette.primary.contrastText
+    : theme.palette.text.primary;
+  const themeBasedBg = isLightTheme
+    ? theme.palette.primary.main
+    : theme.palette.background.paper;
+
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleImageChange = (e, setFieldValue) => {
@@ -95,13 +108,13 @@ const StepOne = ({
   const showSocialIcon = (platform) => {
     switch (platform) {
       case "github": {
-        return <GitHubIcon />;
+        return <GitHubIcon fontSize="small" />;
       }
       case "linkedin": {
-        return <LinkedInIcon />;
+        return <LinkedInIcon fontSize="small" />;
       }
       case "website": {
-        return <LanguageIcon />;
+        return <LanguageIcon fontSize="small" />;
       }
       default:
         return null;
@@ -116,218 +129,319 @@ const StepOne = ({
     >
       {({ setFieldValue, handleBlur, values, touched, errors }) => (
         <Form>
-          <div>
-            <Field name="userType" variant="outlined" fullWidth>
-              {({ field, form }) => {
-                return (
+          <Grid container spacing={2}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: ".6rem",
+                margin: "2.6rem 0 -1.0rem",
+              }}
+            >
+              <Field name="userType" variant="outlined" fullWidth>
+                {({ field, form }) => {
+                  const selectedButton = (
+                    fieldValue,
+                    btnValue,
+                    additionalStyles
+                  ) => {
+                    if (fieldValue === btnValue) {
+                      return {
+                        color: themeBasedColor,
+                        background: themeBasedBg,
+                        ...additionalStyles,
+                      };
+                    } else {
+                      return {
+                        color: theme.palette.text.disabled,
+                        ...additionalStyles,
+                      };
+                    }
+                  };
+                  return (
+                    <>
+                      <InputLabel>Who Are You?</InputLabel>
+                      <div>
+                        <Button
+                          {...field}
+                          onClick={() =>
+                            form.setFieldValue("userType", "jobseeker")
+                          }
+                          sx={selectedButton(field.value, "jobseeker", {
+                            margin: "0 .6rem",
+                          })}
+                        >
+                          Job Seeker
+                        </Button>
+                        <Button
+                          {...field}
+                          onClick={() =>
+                            form.setFieldValue("userType", "employer")
+                          }
+                          sx={selectedButton(field.value, "employer", {
+                            margin: "0 .6rem",
+                          })}
+                        >
+                          Employer
+                        </Button>
+                      </div>
+                    </>
+                  );
+                }}
+              </Field>
+              <ErrorMessage name="userType" component="div" />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Field name="phoneNum" variant="outlined" fullWidth>
+                {({ form, field }) => (
                   <>
-                    <InputLabel>Who Are You?</InputLabel>
-                    <Button
+                    {/* <InputLabel>Phone Number</InputLabel> */}
+                    <TextField
+                      id="phoneNum"
+                      variant="standard"
+                      label={"Phone Number"}
                       {...field}
-                      onClick={() =>
-                        form.setFieldValue("userType", "jobseeker")
+                      fullWidth
+                    />
+                  </>
+                )}
+              </Field>
+              <ErrorMessage name="phoneNum" component="div" />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Field
+                name="location"
+                as={FormControl}
+                variant="outlined"
+                fullWidth
+              >
+                <InputLabel>Location</InputLabel>
+                <Field
+                  as={Input}
+                  name="location"
+                  id="phoneNum"
+                  variant="standard"
+                ></Field>
+              </Field>
+              <ErrorMessage name="location" component="div" />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FieldArray name="socialMedia">
+                {({ push, remove }) => (
+                  <>
+                    {values.socialMedia.map((_, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-end",
+                          marginBottom: ".5rem",
+                        }}
+                      >
+                        <Field
+                          name={`socialMedia.${index}.platform`}
+                          validateOnChange={false}
+                        >
+                          {({ field, form }) => (
+                            <FormControl
+                              error={
+                                getIn(
+                                  form.errors,
+                                  `socialMedia.${index}.platform`
+                                ) &&
+                                getIn(
+                                  form.touched,
+                                  `socialMedia.${index}.platform`
+                                )
+                              }
+                            >
+                              <Select
+                                {...field}
+                                label="Social Media Platform"
+                                variant="standard"
+                              >
+                                {platforms.map((platform) => (
+                                  <MenuItem key={platform} value={platform}>
+                                    {showSocialIcon(platform)}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                              <ErrorMessage
+                                name={`socialMedia.${index}.platform`}
+                                component={FormHelperText}
+                              />
+                            </FormControl>
+                          )}
+                        </Field>
+                        <Field
+                          name={`socialMedia.${index}.value`}
+                          validateOnChange={false}
+                        >
+                          {({ field, form }) => (
+                            <FormControl
+                              error={
+                                getIn(
+                                  form.errors,
+                                  `socialMedia.${index}.value`
+                                ) &&
+                                getIn(
+                                  form.touched,
+                                  `socialMedia.${index}.value`
+                                )
+                              }
+                            >
+                              <TextField
+                                {...field}
+                                label="Value"
+                                variant="standard"
+                              />
+                              <ErrorMessage
+                                name={`socialMedia.${index}.value`}
+                                component={FormHelperText}
+                              />
+                            </FormControl>
+                          )}
+                        </Field>
+                        {index > 0 && (
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              remove(index);
+                            }}
+                            sx={{
+                              color: themeBasedColor,
+                              background: themeBasedBg,
+                              minWidth: "auto",
+                              marginRight: ".2rem",
+                            }}
+                          >
+                            <DeleteForeverIcon fontSize="small" />
+                          </Button>
+                        )}
+                        {values.socialMedia.length === index + 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => push({ platform: "", value: "" })}
+                            sx={{
+                              color: themeBasedColor,
+                              background: themeBasedBg,
+                              minWidth: "auto",
+                            }}
+                          >
+                            <AddBoxIcon fontSize="small" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </>
+                )}
+              </FieldArray>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Field name="profileImage">
+                {({ field, form }) => {
+                  // console.log(form.values);
+                  return (
+                    <div
+                      style={
+                        imagePreview
+                          ? {
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "flex-end",
+                              alignItems: "center",
+                              gap: "15px",
+                            }
+                          : {
+                              display: "flex",
+                              height: "100%",
+                              alignItems: "end",
+                            }
                       }
                     >
-                      Job Seeker
-                    </Button>
-                    <Button
-                      {...field}
-                      onClick={() => form.setFieldValue("userType", "employer")}
-                    >
-                      Employer
-                    </Button>
-                  </>
-                );
-              }}
-            </Field>
-            <ErrorMessage name="userType" component="div" />
-          </div>
-
-          <div>
-            <Field name="phoneNum" variant="outlined" fullWidth>
-              {({ form, field }) => (
-                <>
-                  {/* <InputLabel>Phone Number</InputLabel> */}
-                  <TextField
-                    id="phoneNum"
-                    variant="standard"
-                    label={"Phone Number"}
-                    {...field}
-                    fullWidth
-                  />
-                </>
-              )}
-            </Field>
-            <ErrorMessage name="phoneNum" component="div" />
-          </div>
-
-          <div>
-            <Field
-              name="location"
-              as={FormControl}
-              variant="outlined"
-              fullWidth
-            >
-              <InputLabel>Location</InputLabel>
-              <Field
-                as={Input}
-                name="location"
-                id="phoneNum"
-                variant="standard"
-              ></Field>
-            </Field>
-            <ErrorMessage name="location" component="div" />
-          </div>
-
-          {/* links
-          <div>
-            <Field name="links" as={FormControl} variant="outlined" fullWidth>
-              <InputLabel>Social Links (Website, LinkedIn, etc...) </InputLabel>
-              <Field
-                as={Input}
-                name="links"
-                id="phoneNum"
-                variant="standard"
-              ></Field>
-            </Field>
-            <ErrorMessage name="links" component="div" />
-          </div> */}
-
-          <FieldArray name="socialMedia">
-            {({ push, remove }) => (
-              <>
-                {values.socialMedia.map((_, index) => (
-                  <div key={index}>
-                    <Field
-                      name={`socialMedia.${index}.platform`}
-                      validateOnChange={false}
-                    >
-                      {({ field, form }) => (
-                        <FormControl
-                          error={
-                            getIn(
-                              form.errors,
-                              `socialMedia.${index}.platform`
-                            ) &&
-                            getIn(form.touched, `socialMedia.${index}.platform`)
-                          }
-                        >
-                          <Select {...field} label="Social Media Platform">
-                            {platforms.map((platform) => (
-                              <MenuItem key={platform} value={platform}>
-                                {showSocialIcon(platform)}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                          <ErrorMessage
-                            name={`socialMedia.${index}.platform`}
-                            component={FormHelperText}
-                          />
-                        </FormControl>
+                      {imagePreview && (
+                        <Image
+                          src={imagePreview}
+                          alt="Preview"
+                          style={{
+                            maxWidth: "100%",
+                            marginTop: "10px",
+                            borderRadius: "10000px",
+                          }}
+                          width={100}
+                          height={100}
+                        />
                       )}
-                    </Field>
-                    <Field
-                      name={`socialMedia.${index}.value`}
-                      validateOnChange={false}
-                    >
-                      {({ field, form }) => (
-                        <FormControl
-                          error={
-                            getIn(form.errors, `socialMedia.${index}.value`) &&
-                            getIn(form.touched, `socialMedia.${index}.value`)
-                          }
+                      <label htmlFor="profileImage">
+                        <Button
+                          variant="contained"
+                          component="span"
+                          sx={{
+                            color: themeBasedColor,
+                            background: themeBasedBg,
+                            "&:hover": {
+                              background: themeBasedBg,
+                            },
+                          }}
                         >
-                          <TextField {...field} label="Value" />
-                          <ErrorMessage
-                            name={`socialMedia.${index}.value`}
-                            component={FormHelperText}
-                          />
-                        </FormControl>
-                      )}
-                    </Field>
-                    {index > 0 && (
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          remove(index);
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => push({ platform: "", value: "" })}
-                >
-                  Add Field
-                </Button>
-              </>
-            )}
-          </FieldArray>
+                          Upload Profile Picture
+                        </Button>
+                        <input
+                          type="file"
+                          accept=".jpg, .jpeg, .png"
+                          id="profileImage"
+                          style={{ display: "none" }}
+                          onChange={(event) => {
+                            // form.setFieldValue(
+                            //   "profileImage",
+                            //   event.currentTarget.files[0]
+                            // );
+                            handleImageChange(event, form.setFieldValue);
+                          }}
+                        />
+                      </label>
+                    </div>
+                  );
+                }}
+              </Field>
 
-          <div>
-            <Field name="profileImage">
-              {({ field, form }) => {
-                console.log(form.values);
-                return (
-                  <div>
-                    <label htmlFor="profileImage">
-                      <Button
-                        variant="outlined"
-                        component="span"
-                        sx={{ color: "white" }}
-                      >
-                        Upload Profile Picture
-                      </Button>
-                      <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png"
-                        id="profileImage"
-                        style={{ display: "none" }}
-                        onChange={(event) => {
-                          // form.setFieldValue(
-                          //   "profileImage",
-                          //   event.currentTarget.files[0]
-                          // );
-                          handleImageChange(event, form.setFieldValue);
-                        }}
-                      />
-                    </label>
-                    {imagePreview && (
-                      <Image
-                        src={imagePreview}
-                        alt="Preview"
-                        style={{ maxWidth: "100%", marginTop: "10px" }}
-                        width={100}
-                        height={100}
-                      />
-                    )}
-                  </div>
-                );
+              <ErrorMessage
+                name="profileImage"
+                component="div"
+                className="error"
+              />
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "2rem",
               }}
-            </Field>
-
-            <ErrorMessage
-              name="profileImage"
-              component="div"
-              className="error"
-            />
-          </div>
-
-          <div>
-            <Button
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              variant="contained"
             >
-              Back
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
-              {isLastStep ? "Submit" : "Next"}
-            </Button>
-          </div>
+              <Button
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                variant="contained"
+              >
+                Back
+              </Button>
+              <Button type="submit" variant="contained" color="primary">
+                {isLastStep ? "Submit" : "Next"}
+              </Button>
+            </Grid>
+          </Grid>
         </Form>
       )}
     </Formik>
