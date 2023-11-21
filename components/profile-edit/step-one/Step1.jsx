@@ -25,6 +25,12 @@ import LanguageIcon from "@mui/icons-material/Language";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 //----------------------------------------------------------
+
+const ErrorMessageStyled = styled(ErrorMessage)(({ theme }) => ({
+  color: theme.palette.error.main,
+}));
+
+//----------------------------------------------------------
 const MAX_FILE_SIZE = 512000; //500KB
 
 const phoneRegExp =
@@ -194,7 +200,7 @@ const StepOne = ({
                   );
                 }}
               </Field>
-              <ErrorMessage name="userType" component="div" />
+              <ErrorMessageStyled name="userType" component={FormHelperText} />
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -212,7 +218,7 @@ const StepOne = ({
                   </>
                 )}
               </Field>
-              <ErrorMessage name="phoneNum" component="div" />
+              <ErrorMessageStyled name="phoneNum" component={FormHelperText} />
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -230,7 +236,7 @@ const StepOne = ({
                   variant="standard"
                 ></Field>
               </Field>
-              <ErrorMessage name="location" component="div" />
+              <ErrorMessageStyled name="location" component={FormHelperText} />
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -303,7 +309,7 @@ const StepOne = ({
                                 label="Value"
                                 variant="standard"
                               />
-                              <ErrorMessage
+                              <ErrorMessageStyled
                                 name={`socialMedia.${index}.value`}
                                 component={FormHelperText}
                               />
@@ -414,10 +420,9 @@ const StepOne = ({
                 }}
               </Field>
 
-              <ErrorMessage
+              <ErrorMessageStyled
                 name="profileImage"
-                component="div"
-                className="error"
+                component={FormHelperText}
               />
             </Grid>
 
