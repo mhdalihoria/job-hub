@@ -43,12 +43,19 @@ const validationSchema = Yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid"),
   location: Yup.string().required("Location is required"),
   // links: Yup.string().required("Please Provide your Link(s)"),
-  socialMedia: Yup.array().of(
-    Yup.object().shape({
-      platform: Yup.string().required("Required"),
-      value: Yup.string().required("Enter Your Link"),
-    })
+  socialMedia: Yup.array().test(
+    "socialMedia",
+    "Please fill in all social media fields",
+    function (value) {
+      // Custom validation for the entire array
+      const isValid = value.every(
+        (item) => item && item.platform && item.value
+      );
+
+      return isValid;
+    }
   ),
+  // ... other fields
   profileImage: Yup.mixed()
     .required("Required")
     .test(
@@ -309,10 +316,10 @@ const StepOne = ({
                                 label="Value"
                                 variant="standard"
                               />
-                              <ErrorMessageStyled
+                              {/* <ErrorMessageStyled
                                 name={`socialMedia.${index}.value`}
                                 component={FormHelperText}
-                              />
+                              /> */}
                             </FormControl>
                           )}
                         </Field>
@@ -350,6 +357,10 @@ const StepOne = ({
                   </>
                 )}
               </FieldArray>
+              <ErrorMessageStyled
+                name={`socialMedia`}
+                component={FormHelperText}
+              />
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -370,7 +381,9 @@ const StepOne = ({
                           : {
                               display: "flex",
                               height: "100%",
-                              alignItems: "end",
+                              flexDirection: "column",
+                              justifyContent: "flex-end",
+                              alignItems: "flex-start",
                             }
                       }
                     >
@@ -401,6 +414,7 @@ const StepOne = ({
                         >
                           Upload Profile Picture
                         </Button>
+
                         <input
                           type="file"
                           accept=".jpg, .jpeg, .png"
@@ -415,15 +429,14 @@ const StepOne = ({
                           }}
                         />
                       </label>
+                      <ErrorMessageStyled
+                        name="profileImage"
+                        component={FormHelperText}
+                      />
                     </div>
                   );
                 }}
               </Field>
-
-              <ErrorMessageStyled
-                name="profileImage"
-                component={FormHelperText}
-              />
             </Grid>
 
             <Grid
