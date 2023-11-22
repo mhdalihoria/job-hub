@@ -218,7 +218,7 @@ const StepOne = ({
                     <TextField
                       id="phoneNum"
                       variant="standard"
-                      label={"Phone Number"}
+                      label={"Phone Number (001 123 456 789)"}
                       {...field}
                       fullWidth
                     />
