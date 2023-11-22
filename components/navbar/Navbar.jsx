@@ -107,6 +107,7 @@ export default function PrimarySearchAppBar() {
 
   const handleLogOut = () => {
     signOut(auth);
+    router.push("/");
     handleMenuClose();
   };
 
