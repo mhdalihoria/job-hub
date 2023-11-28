@@ -66,9 +66,9 @@ const darkTheme = createTheme({
       hint: "rgba(255, 255, 255, 0.5)",
     },
     primary: {
-      main: "#003A9B",
-      light: "rgb(51, 97, 175)",
-      dark: "rgb(0, 40, 108)",
+      main: "#2f2f2f",
+      light: "rgba(47, 47, 47, .8)",
+      dark: "#1f1f1f",
       contrastText: "#FFFFFF",
     },
     secondary: {

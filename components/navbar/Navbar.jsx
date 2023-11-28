@@ -121,13 +121,12 @@ export default function PrimarySearchAppBar() {
   const loginButton = (
     <Button
       sx={{
-        background: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
         marginLeft: "10px",
       }}
       onClick={() => {
         router.push("/login");
       }}
+      variant="contained"
     >
       Login
     </Button>
@@ -136,13 +135,13 @@ export default function PrimarySearchAppBar() {
   const signupButton = (
     <Button
       sx={{
-        background: theme.palette.secondary.main,
-        color: theme.palette.secondary.contrastText,
         marginLeft: "10px",
       }}
       onClick={() => {
         router.push("/signup");
       }}
+      variant="contained"
+      color="secondary"
     >
       Signup
     </Button>
