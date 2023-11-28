@@ -73,11 +73,15 @@ const ProfileForm = () => {
     setUserRole(role);
   };
 
+  const handleGoBack = () => {
+    setUserRole(null)
+  }
+
   const displayedForm = () => {
     if (userRole === "seeker") {
-      return <SeekerForm />;
+      return <SeekerForm goBack={handleGoBack}/>;
     } else if (userRole === "employer") {
-      return <EmployerForm />;
+      return <EmployerForm goBack={handleGoBack}/>;
     } else {
       return (
         <ContainerStyled>
