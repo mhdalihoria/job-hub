@@ -86,12 +86,13 @@ const ProfileForm = () => {
               marginBottom: "2em",
               marginTop: "1.5em",
               fontSize: "1.5rem",
+              textAlign: "center"
             }}
           >
             Which of Those Are You?
           </p>
-          <Grid container>
-            <Grid item xs={12} sm={6}>
+          <Grid container >
+            <Grid item xs={12} sm={6} sx={{ padding: "1rem" }}>
               <UserRolePaper elevation={2}>
                 <UserRoleButton onClick={() => handleChooseUserRole("seeker")}>
                   <WorkIcon sx={IconStyles} />
@@ -99,7 +100,7 @@ const ProfileForm = () => {
                 </UserRoleButton>
               </UserRolePaper>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} sx={{ padding: "1rem" }}>
               <UserRolePaper elevation={2}>
                 <UserRoleButton
                   onClick={() => handleChooseUserRole("employer")}
