@@ -1,23 +1,20 @@
-import React from "react";
 import DefaultLayout from "@/layouts/DefaultLayout";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  TextField,
   useTheme,
   styled,
   Paper,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
   Box,
+  Container,
+  Grid,
+  Button,
 } from "@mui/material";
-import Step1 from "@/components/profile-edit/step-one/Step1";
+import BusinessIcon from "@mui/icons-material/Business";
+import WorkIcon from "@mui/icons-material/Work";
+import { useState } from "react";
+import SeekerForm from "@/components/profile-edit/jobSeeker/SeekerForm";
+import EmployerForm from "@/components/profile-edit/employer/EmployerForm";
 
 const FormContainerStyled = styled("div")(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -33,31 +30,88 @@ const FormStyled = styled(Box)(({ theme }) => ({
   padding: "2rem 1rem",
 }));
 
-const steps = ["Step 1", "Step 2", "Step 3"];
+const ContainerStyled = styled(Container)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flexDirection: "column",
 
+  marginBottom: "2rem",
+}));
 
+const UserRolePaper = styled(Paper)(({ theme }) => ({
+  padding: "1rem",
+  maxWidth: "200px",
+  margin: "auto",
+}));
+const UserRoleButton = styled(Button)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flexDirection: "column",
+  gap: "10px",
+  width: "100%",
+  color:
+    theme.palette.mode === "light"
+      ? theme.palette.primary.main
+      : theme.palette.primary.contrastText,
+
+  "& p": {
+    fontSize: "1.2rem",
+  },
+}));
+
+const IconStyles = { fontSize: 40 };
 
 const ProfileForm = () => {
   const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [formData, setFormData] = React.useState(null);
-  console.log(formData);
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const [formData, setFormData] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  console.log(userRole);
+
+  const handleChooseUserRole = (role) => {
+    setUserRole(role);
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const isLastStep = activeStep === steps.length - 1;
-
-  const handleSubmit = (values) => {
-    if (isLastStep) {
-      // Handle form submission logic here
-      console.log(values);
+  const displayedForm = () => {
+    if (userRole === "seeker") {
+      return <SeekerForm />;
+    } else if (userRole === "employer") {
+      return <EmployerForm />;
     } else {
-      handleNext();
+      return (
+        <ContainerStyled>
+          <p
+            style={{
+              marginBottom: "2em",
+              marginTop: "1.5em",
+              fontSize: "1.5rem",
+            }}
+          >
+            Which of Those Are You?
+          </p>
+          <Grid container>
+            <Grid item xs={12} sm={6}>
+              <UserRolePaper elevation={2}>
+                <UserRoleButton onClick={() => handleChooseUserRole("seeker")}>
+                  <WorkIcon sx={IconStyles} />
+                  <p>Job Seeker</p>
+                </UserRoleButton>
+              </UserRolePaper>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <UserRolePaper elevation={2}>
+                <UserRoleButton
+                  onClick={() => handleChooseUserRole("employer")}
+                >
+                  <BusinessIcon sx={IconStyles} />
+                  <p>Employer</p>
+                </UserRoleButton>
+              </UserRolePaper>
+            </Grid>
+          </Grid>
+        </ContainerStyled>
+      );
     }
   };
 
@@ -65,47 +119,7 @@ const ProfileForm = () => {
     <DefaultLayout>
       <FormContainerStyled>
         <PaperStyled elevation={1}>
-          <FormStyled>
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-            <div>
-              {activeStep === 0 && (
-                <div style={{ maxWidth: "650px", margin: "auto" }}>
-                  <Step1
-                    setFormData={setFormData}
-                    activeStep={activeStep}
-                    handleBack={handleBack}
-                    handleNext={handleNext}
-                    isLastStep={isLastStep}
-                  />
-                </div>
-              )}
-
-              {activeStep === 1 && (
-               <div style={{ maxWidth: "650px", margin: "auto" }}>
-               
-             </div>
-              )}
-              {/* Add fields for the third step */}
-            </div>
-            {/* <div>
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  variant="contained"
-                >
-                  Back
-                </Button>
-                <Button type="submit" variant="contained" color="primary">
-                  {isLastStep ? "Submit" : "Next"}
-                </Button>
-              </div> */}
-          </FormStyled>
+          <FormStyled>{displayedForm()}</FormStyled>
         </PaperStyled>
       </FormContainerStyled>
     </DefaultLayout>
