@@ -186,7 +186,6 @@ function Login() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                autoFocus
                 color="info"
               />
               <div
