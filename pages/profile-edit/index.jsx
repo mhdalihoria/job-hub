@@ -35,19 +35,7 @@ const FormStyled = styled(Box)(({ theme }) => ({
 
 const steps = ["Step 1", "Step 2", "Step 3"];
 
-const validationSchema = [
-  Yup.object().shape({
-    userType: Yup.string().required("User Type is required"),
-  }),
-  Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-  }),
-  Yup.object().shape({
-    // Define validation schema for the third step
-  }),
-];
+
 
 const ProfileForm = () => {
   const theme = useTheme();
@@ -77,16 +65,6 @@ const ProfileForm = () => {
     <DefaultLayout>
       <FormContainerStyled>
         <PaperStyled elevation={1}>
-          {/* <Formik
-            initialValues={{
-              userType: "",
-              name: "",
-              email: "",
-              // Add fields for the third step
-            }}
-            validationSchema={validationSchema[activeStep]}
-            onSubmit={handleSubmit}
-          >*/}
           <FormStyled>
             <Stepper activeStep={activeStep} alternativeLabel>
               {steps.map((label) => (
@@ -97,53 +75,21 @@ const ProfileForm = () => {
             </Stepper>
             <div>
               {activeStep === 0 && (
-                // <div>
-                //   <Field
-                //     name="userType"
-                //     as={FormControl}
-                //     variant="outlined"
-                //     fullWidth
-                //   >
-                //     <InputLabel>Who Are You?</InputLabel>
-                //     <Field as={Select} name="userType" id="userType">
-                //       <MenuItem
-                //         value="jobSeeker"
-                //         id="jobSeekerOption"
-                //         name="jobSeekerOption"
-                //       >
-                //         Job Seeker
-                //       </MenuItem>
-                //       <MenuItem
-                //         value="employer"
-                //         id="employerOption"
-                //         name="employerOption"
-                //       >
-                //         Employer
-                //       </MenuItem>
-                //     </Field>
-                //   </Field>
-
-                //   <ErrorMessage name="userType" component="div" />
-                // </div>
-                <Step1
-                  setFormData={setFormData}
-                  activeStep={activeStep}
-                  handleBack={handleBack}
-                  handleNext={handleNext}
-                  isLastStep={isLastStep}
-                />
+                <div style={{ maxWidth: "650px", margin: "auto" }}>
+                  <Step1
+                    setFormData={setFormData}
+                    activeStep={activeStep}
+                    handleBack={handleBack}
+                    handleNext={handleNext}
+                    isLastStep={isLastStep}
+                  />
+                </div>
               )}
 
               {activeStep === 1 && (
-                <div>
-                  {/* <Field
-                      name="email"
-                      as={TextField}
-                      label="Email"
-                      fullWidth
-                    />
-                    <ErrorMessage name="email" component="div" /> */}
-                </div>
+               <div style={{ maxWidth: "650px", margin: "auto" }}>
+               
+             </div>
               )}
               {/* Add fields for the third step */}
             </div>
@@ -160,7 +106,6 @@ const ProfileForm = () => {
                 </Button>
               </div> */}
           </FormStyled>
-          {/* </Formik> */}
         </PaperStyled>
       </FormContainerStyled>
     </DefaultLayout>
