@@ -5,7 +5,7 @@ const CustomButton = ({ onClick, variant = "text", children, ...props }) => {
   const theme = useTheme();
   const bgColor = theme.palette.primary.main;
   const textColor = theme.palette.getContrastText(bgColor);
-  const borderColor = variant === "outlined" ? textColor : "";
+  const borderColor = variant === "outlined" ? textColor : "transparent";
 
   return (
     <Button
