@@ -79,7 +79,7 @@ const workExpArr = [
     jobTitle: "",
     companyName: "",
     jobRole: "",
-    duration: { startingFrom: null, endingAt: null },
+    duration: { startDate: null, endDate: null },
     description: "",
   },
 ];
@@ -447,9 +447,148 @@ const SeekerForm = ({ goBack }) => {
                     }}
                   </Field>
                 </Grid>
+                {/* Optional Fields */}
                 <Grid item xs={12}>
                   <Divider>Optional</Divider>
                 </Grid>
+                <Grid item xs={12}>
+                  <FieldArray name="courses">
+                    {({ push, remove }) => (
+                      <div>
+                        {values.courses.map((_, index) => (
+                          <div key={index}>
+                            <Field name={`courses.${index}.courseTitle`}>
+                              {({ field, form }) => (
+                                <TextField
+                                  variant="standard"
+                                  {...field}
+                                  label="Course Title"
+                                />
+                              )}
+                            </Field>
+                            <Field name={`courses.${index}.courseAuthor`}>
+                              {({ field, form }) => (
+                                <TextField
+                                  variant="standard"
+                                  {...field}
+                                  label="Course Author"
+                                />
+                              )}
+                            </Field>
+
+                            <Field name={`courses.${index}.courseDescription`}>
+                              {({ field, form }) => (
+                                <TextField
+                                  variant="standard"
+                                  {...field}
+                                  label="Course Description"
+                                />
+                              )}
+                            </Field>
+
+                            <Field name={`courses.${index}.duration.startDate`}>
+                              {({ field, form }) => (
+                                <LocalizationProvider
+                                  dateAdapter={AdapterDayjs}
+                                >
+                                  <DatePicker
+                                    {...field}
+                                    label="Starting From"
+                                    onChange={(date) => {
+                                      form.setFieldValue(
+                                        `courses.${index}.duration.startDate`,
+                                        date
+                                      );
+                                    }}
+                                  />
+                                </LocalizationProvider>
+                              )}
+                            </Field>
+
+                            <Field name={`courses.${index}.duration.endDate`}>
+                              {({ field, form }) => (
+                                <LocalizationProvider
+                                  dateAdapter={AdapterDayjs}
+                                >
+                                  <DatePicker
+                                    {...field}
+                                    label="End Date"
+                                    onChange={(date) => {
+                                      form.setFieldValue(
+                                        `courses.${index}.duration.endDate`,
+                                        date
+                                      );
+                                    }}
+                                  />
+                                </LocalizationProvider>
+                              )}
+                            </Field>
+
+                            <CustomButton
+                              variant="outlined"
+                              onClick={() => remove(index)}
+                            >
+                              Remove Experience
+                            </CustomButton>
+                          </div>
+                        ))}
+
+                        <CustomButton
+                          variant="outlined"
+                          onClick={() => push(workExpArr)}
+                        >
+                          Add Experience
+                        </CustomButton>
+                      </div>
+                    )}
+                  </FieldArray>
+                </Grid>
+                <Grid item xs={12}>
+                  <Field name="websiteLink" variant="outlined" fullWidth>
+                    {({ form, field }) => (
+                      <>
+                        <TextField
+                          id="websiteLink"
+                          variant="standard"
+                          label={"Portfolio or Website"}
+                          {...field}
+                          fullWidth
+                        />
+                      </>
+                    )}
+                  </Field>
+                </Grid>
+                <Grid item xs={12}>
+                  <Field name="linkedInLink" variant="outlined" fullWidth>
+                    {({ form, field }) => (
+                      <>
+                        <TextField
+                          id="linkedInLink"
+                          variant="standard"
+                          label={"LinkedIn Profile"}
+                          {...field}
+                          fullWidth
+                        />
+                      </>
+                    )}
+                  </Field>
+                </Grid>
+                <Grid item xs={12}>
+                  <Field name="githubLink" variant="outlined" fullWidth>
+                    {({ form, field }) => (
+                      <>
+                        <TextField
+                          id="githubLink"
+                          variant="standard"
+                          label={"GitHub Profile"}
+                          {...field}
+                          fullWidth
+                        />
+                      </>
+                    )}
+                  </Field>
+                </Grid>
+
                 <Grid item xs={12}>
                   <Button type="submit" variant="contained">
                     Submit
