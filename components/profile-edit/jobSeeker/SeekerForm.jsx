@@ -13,6 +13,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -168,6 +169,8 @@ const SeekerForm = ({ goBack }) => {
                       </>
                     )}
                   </Field>
+                </Grid>
+                <Grid item xs={12}>
                   <Field name="jobTitle" variant="outlined" fullWidth>
                     {({ form, field }) => (
                       <>
@@ -184,6 +187,8 @@ const SeekerForm = ({ goBack }) => {
                       </>
                     )}
                   </Field>
+                </Grid>
+                <Grid item xs={12}>
                   <FieldArray name="skills">
                     {({ push, remove }) => (
                       <div>
@@ -260,7 +265,8 @@ const SeekerForm = ({ goBack }) => {
                       </div>
                     )}
                   </FieldArray>
-
+                </Grid>
+                <Grid item xs={12}>
                   <FieldArray name="workExp">
                     {({ push, remove }) => (
                       <div>
@@ -413,7 +419,8 @@ const SeekerForm = ({ goBack }) => {
                       </div>
                     )}
                   </FieldArray>
-
+                </Grid>
+                <Grid item xs={12}>
                   <Field name="reseme">
                     {({ field, form }) => {
                       console.log(form.values);
@@ -439,6 +446,9 @@ const SeekerForm = ({ goBack }) => {
                       );
                     }}
                   </Field>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider>Optional</Divider>
                 </Grid>
                 <Grid item xs={12}>
                   <Button type="submit" variant="contained">
