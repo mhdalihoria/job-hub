@@ -1,3 +1,4 @@
+import CustomButton from "@/components/custom-mui-components/Button/CustomButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Box,
@@ -10,8 +11,10 @@ import {
   FormControl,
   styled,
   InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
 // -----------------------------------------
 
@@ -90,6 +93,8 @@ const initialValues = {
     },
   ],
 };
+
+const skillLevels = ["beginner", "intermediate", "expert"];
 // -----------------------------------------
 
 const SeekerForm = ({ goBack }) => {
@@ -142,7 +147,7 @@ const SeekerForm = ({ goBack }) => {
                         <TextField
                           id="jobTitle"
                           variant="standard"
-                          label={"Your Desired Job Title"}
+                          label={"Your Desired Job Title*"}
                           {...field}
                           fullWidth
                         />
@@ -152,6 +157,82 @@ const SeekerForm = ({ goBack }) => {
                       </>
                     )}
                   </Field>
+                  <FieldArray name="skills">
+                    {({ push, remove }) => (
+                      <div>
+                        {values.skills.map((_, index) => (
+                          <div key={index}>
+                            <Field name={`skills.${index}.skillName`}>
+                              {({ field, form }) => (
+                                <TextField
+                                  variant="standard"
+                                  {...field}
+                                  label="Skill Name"
+                                  error={
+                                    form.touched.skills?.[index]?.skillName &&
+                                    Boolean(
+                                      form.errors.skills?.[index]?.skillName
+                                    )
+                                  }
+                                  helperText={
+                                    form.touched.skills?.[index]?.skillName &&
+                                    form.errors.skills?.[index]?.skillName
+                                  }
+                                />
+                              )}
+                            </Field>
+
+                            <Field name={`skills.${index}.skillLvl`}>
+                              {({ field, form }) => (
+                                <FormControl>
+                                  <InputLabel id={`skills.${index}.skillLvl`}>
+                                    Skill Level
+                                  </InputLabel>
+                                  <Select
+                                    {...field}
+                                    label="Skill Level"
+                                    error={
+                                      form.touched.skills?.[index]?.skillLvl &&
+                                      Boolean(
+                                        form.errors.skills?.[index]?.skillLvl
+                                      )
+                                    }
+                                    sx={{ width: "100px", height: "48px" }}
+                                  >
+                                    {skillLevels.map((level) => (
+                                      <MenuItem key={level} value={level}>
+                                        {level}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                  {form.touched.skills?.[index]?.skillLvl &&
+                                    form.errors.skills?.[index]?.skillLvl && (
+                                      <div>
+                                        {form.errors.skills?.[index]?.skillLvl}
+                                      </div>
+                                    )}
+                                </FormControl>
+                              )}
+                            </Field>
+
+                            <CustomButton
+                              variant="outlined"
+                              onClick={() => remove(index)}
+                            >
+                              Remove Skill
+                            </CustomButton>
+                          </div>
+                        ))}
+
+                        <CustomButton
+                          variant="outlined"
+                          onClick={() => push({ skillName: "", skillLvl: "" })}
+                        >
+                          Add Skill
+                        </CustomButton>
+                      </div>
+                    )}
+                  </FieldArray>
                 </Grid>
                 <Grid item xs={12}>
                   <Button type="submit" variant="contained">
