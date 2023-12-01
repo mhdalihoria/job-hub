@@ -34,7 +34,6 @@ const ErrorMessageStyled = styled("div")(({ theme }) => ({
 const MAX_FILE_SIZE = 2048000; //500KB
 
 const validationSchema = Yup.object().shape({
-  phoneNum: Yup.number("Numbers Only").required("Required"),
   jobTitle: Yup.string().required("Required"),
   skills: Yup.array().of(
     Yup.object().shape({
@@ -62,6 +61,7 @@ const validationSchema = Yup.object().shape({
       "Max allowed size is 2MB",
       (value) => value && value.size <= MAX_FILE_SIZE
     ),
+  phoneNum: Yup.number("Numbers Only").optional(),
   websiteLink: Yup.string().optional(),
   linkedInLink: Yup.string().optional(),
   githubLink: Yup.string().optional(),
@@ -87,11 +87,11 @@ const workExpArr = [
 ];
 
 const initialValues = {
-  phoneNum: "",
   jobTitle: "",
   skills: [{ skillName: "", skillLvl: "" }],
   workExp: workExpArr,
   reseme: "",
+  phoneNum: "",
   websiteLink: "",
   linkedInLink: "",
   githubLink: "",
@@ -157,57 +157,20 @@ const SeekerForm = ({ goBack }) => {
                 <Grid
                   item
                   xs={12}
-                  sx={{ marginTop: "1rem", marginBottom: "-0.6rem" }}
+                  sx={{ marginTop: "1rem", marginBottom: "1rem" }}
                 >
-                  <h2>Personal Information & Experience:</h2>
-                </Grid>
-                <Grid item xs={12} rowSpacing={3}>
-                  <Field name="phoneNum" variant="outlined" fullWidth>
-                    {({ form, field }) => (
-                      <>
-                        <TextField
-                          id="phoneNum"
-                          variant="standard"
-                          label={"Phone Number* (001 123 456 789)"}
-                          {...field}
-                          fullWidth
-                        />
-                        <ErrorMessageStyled>
-                          <ErrorMessage name="phoneNum" />
-                        </ErrorMessageStyled>
-                      </>
-                    )}
-                  </Field>
-                </Grid>
-                <Grid item xs={12} rowSpacing={3}>
-                  <Field name="jobTitle" variant="outlined" fullWidth>
-                    {({ form, field }) => (
-                      <>
-                        <TextField
-                          id="jobTitle"
-                          variant="standard"
-                          label={"Your Desired Job Title*"}
-                          {...field}
-                          fullWidth
-                        />
-                        <ErrorMessageStyled>
-                          <ErrorMessage name="jobTitle" />
-                        </ErrorMessageStyled>
-                      </>
-                    )}
-                  </Field>
+                  <h2>Previous Skills & Experience:</h2>
                 </Grid>
                 <Grid item xs={12}>
                   <Field name="reseme">
                     {({ field, form }) => {
-                      console.log(form.values);
                       return (
                         <div>
                           <label htmlFor="reseme">
                             <CustomButton
                               variant="contained"
                               component="span"
-                              sx={{ width: "100%" }}
+                              sx={{ width: "100%", marginBottom: "-1rem" }}
                             >
                               Upload Reseme
                             </CustomButton>
@@ -228,6 +191,26 @@ const SeekerForm = ({ goBack }) => {
                     }}
                   </Field>
                 </Grid>
+
+                <Grid item xs={12} rowSpacing={3}>
+                  <Field name="jobTitle" variant="outlined" fullWidth>
+                    {({ form, field }) => (
+                      <>
+                        <TextField
+                          id="jobTitle"
+                          variant="standard"
+                          label={"Desired Job Title"}
+                          {...field}
+                          fullWidth
+                        />
+                        <ErrorMessageStyled>
+                          <ErrorMessage name="jobTitle" />
+                        </ErrorMessageStyled>
+                      </>
+                    )}
+                  </Field>
+                </Grid>
+
                 <Grid item xs={12}>
                   <FieldArray name="skills">
                     {({ push, remove }) => (
@@ -528,7 +511,22 @@ const SeekerForm = ({ goBack }) => {
                   xs={12}
                   sx={{ marginTop: "1rem", marginBottom: "-0.6rem" }}
                 >
-                  <h2>Education and Personal Links:</h2>
+                  <h2>Education & Personal Info:</h2>
+                </Grid>
+                <Grid item xs={12} rowSpacing={3}>
+                  <Field name="phoneNum" variant="outlined" fullWidth>
+                    {({ form, field }) => (
+                      <>
+                        <TextField
+                          id="phoneNum"
+                          variant="standard"
+                          label={"Phone Number (001 123 456 789)"}
+                          {...field}
+                          fullWidth
+                        />
+                      </>
+                    )}
+                  </Field>
                 </Grid>
                 <Grid item xs={12}>
                   <Field name="websiteLink" variant="outlined" fullWidth>
@@ -706,9 +704,9 @@ const SeekerForm = ({ goBack }) => {
                   <CustomButton
                     type="submit"
                     variant="contained"
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", fontSize: "1.2rem" }}
                   >
-                    Submit
+                    Submit Form
                   </CustomButton>
                 </Grid>
               </Grid>
