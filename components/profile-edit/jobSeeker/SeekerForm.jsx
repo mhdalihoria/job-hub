@@ -46,8 +46,8 @@ const validationSchema = Yup.object().shape({
       companyName: Yup.string().required("Required"),
       jobRole: Yup.string().required("Required"),
       duration: Yup.object().shape({
-        startingFrom: Yup.string().required("Required"),
-        endingAt: Yup.string().required("Required"),
+        startDate: Yup.string().required("Required"),
+        endDate: Yup.string().required("Required"),
       }),
       // }).required("Required"),
       description: Yup.string().required("Required"),
@@ -98,8 +98,8 @@ const initialValues = {
       courseTitle: "",
       courseAuthor: "",
       courseDescription: "",
-      startDate: "",
-      endDate: "",
+      startDate: null,
+      endDate: null,
     },
   ],
 };
@@ -317,6 +317,8 @@ const SeekerForm = ({ goBack }) => {
                               {({ field, form }) => (
                                 <TextField
                                   variant="standard"
+                                  multiline
+                                  rows={4}
                                   {...field}
                                   label="Position Role"
                                   error={
@@ -333,9 +335,7 @@ const SeekerForm = ({ goBack }) => {
                               )}
                             </Field>
 
-                            <Field
-                              name={`workExp.${index}.duration.startingFrom`}
-                            >
+                            <Field name={`workExp.${index}.duration.startDate`}>
                               {({ field, form }) => (
                                 <LocalizationProvider
                                   dateAdapter={AdapterDayjs}
@@ -343,32 +343,33 @@ const SeekerForm = ({ goBack }) => {
                                   <DatePicker
                                     {...field}
                                     label="Starting From"
+                                    value={field.value || null}
                                     onChange={(date) => {
                                       form.setFieldValue(
-                                        `workExp.${index}.duration.startingFrom`,
+                                        `workExp.${index}.duration.startDate`,
                                         date
                                       );
                                     }}
                                     error={
                                       form.touched.workExp?.[index]?.duration
-                                        ?.startingFrom &&
+                                        ?.startDate &&
                                       Boolean(
                                         form.errors.workExp?.[index]?.duration
-                                          ?.startingFrom
+                                          ?.startDate
                                       )
                                     }
                                     helperText={
                                       form.touched.workExp?.[index]?.duration
-                                        ?.startingFrom &&
+                                        ?.startDate &&
                                       form.errors.workExp?.[index]?.duration
-                                        ?.startingFrom
+                                        ?.startDate
                                     }
                                   />
                                 </LocalizationProvider>
                               )}
                             </Field>
 
-                            <Field name={`workExp.${index}.duration.endingAt`}>
+                            <Field name={`workExp.${index}.duration.endDate`}>
                               {({ field, form }) => (
                                 <LocalizationProvider
                                   dateAdapter={AdapterDayjs}
@@ -376,25 +377,26 @@ const SeekerForm = ({ goBack }) => {
                                   <DatePicker
                                     {...field}
                                     label="End Date"
+                                    value={field.value || null}
                                     onChange={(date) => {
                                       form.setFieldValue(
-                                        `workExp.${index}.duration.endingAt`,
+                                        `workExp.${index}.duration.endDate`,
                                         date
                                       );
                                     }}
                                     error={
                                       form.touched.workExp?.[index]?.duration
-                                        ?.endingAt &&
+                                        ?.endDate &&
                                       Boolean(
                                         form.errors.workExp?.[index]?.duration
-                                          ?.endingAt
+                                          ?.endDate
                                       )
                                     }
                                     helperText={
                                       form.touched.workExp?.[index]?.duration
-                                        ?.endingAt &&
+                                        ?.endDate &&
                                       form.errors.workExp?.[index]?.duration
-                                        ?.endingAt
+                                        ?.endDate
                                     }
                                   />
                                 </LocalizationProvider>
@@ -480,6 +482,8 @@ const SeekerForm = ({ goBack }) => {
                               {({ field, form }) => (
                                 <TextField
                                   variant="standard"
+                                  multiline
+                                  rows={4}
                                   {...field}
                                   label="Course Description"
                                 />
@@ -494,6 +498,7 @@ const SeekerForm = ({ goBack }) => {
                                   <DatePicker
                                     {...field}
                                     label="Starting From"
+                                    value={field.value || null}
                                     onChange={(date) => {
                                       form.setFieldValue(
                                         `courses.${index}.duration.startDate`,
@@ -513,6 +518,7 @@ const SeekerForm = ({ goBack }) => {
                                   <DatePicker
                                     {...field}
                                     label="End Date"
+                                    value={field.value || null}
                                     onChange={(date) => {
                                       form.setFieldValue(
                                         `courses.${index}.duration.endDate`,
