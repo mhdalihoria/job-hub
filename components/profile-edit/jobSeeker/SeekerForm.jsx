@@ -20,6 +20,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
+import IndeterminateCheckBox from "@mui/icons-material/IndeterminateCheckBox";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 // -----------------------------------------
 
 const ErrorMessageStyled = styled("div")(({ theme }) => ({
@@ -251,17 +253,18 @@ const SeekerForm = ({ goBack }) => {
                               variant="outlined"
                               onClick={() => remove(index)}
                             >
-                              Remove Skill
+                              <IndeterminateCheckBox />
+                            </CustomButton>
+                            <CustomButton
+                              variant="outlined"
+                              onClick={() =>
+                                push({ skillName: "", skillLvl: "" })
+                              }
+                            >
+                              <AddBoxIcon />
                             </CustomButton>
                           </div>
                         ))}
-
-                        <CustomButton
-                          variant="outlined"
-                          onClick={() => push({ skillName: "", skillLvl: "" })}
-                        >
-                          Add Skill
-                        </CustomButton>
                       </div>
                     )}
                   </FieldArray>
@@ -407,17 +410,16 @@ const SeekerForm = ({ goBack }) => {
                               variant="outlined"
                               onClick={() => remove(index)}
                             >
-                              Remove Experience
+                              <IndeterminateCheckBox />
+                            </CustomButton>
+                            <CustomButton
+                              variant="outlined"
+                              onClick={() => push(workExpArr)}
+                            >
+                              <AddBoxIcon />
                             </CustomButton>
                           </div>
                         ))}
-
-                        <CustomButton
-                          variant="outlined"
-                          onClick={() => push(workExpArr)}
-                        >
-                          Add Experience
-                        </CustomButton>
                       </div>
                     )}
                   </FieldArray>
@@ -458,93 +460,114 @@ const SeekerForm = ({ goBack }) => {
                     {({ push, remove }) => (
                       <div>
                         {values.courses.map((_, index) => (
-                          <div key={index}>
-                            <Field name={`courses.${index}.courseTitle`}>
-                              {({ field, form }) => (
-                                <TextField
-                                  variant="standard"
-                                  {...field}
-                                  label="Course Title"
-                                />
-                              )}
-                            </Field>
-                            <Field name={`courses.${index}.courseAuthor`}>
-                              {({ field, form }) => (
-                                <TextField
-                                  variant="standard"
-                                  {...field}
-                                  label="Course Author"
-                                />
-                              )}
-                            </Field>
-
-                            <Field name={`courses.${index}.courseDescription`}>
-                              {({ field, form }) => (
-                                <TextField
-                                  variant="standard"
-                                  multiline
-                                  rows={4}
-                                  {...field}
-                                  label="Course Description"
-                                />
-                              )}
-                            </Field>
-
-                            <Field name={`courses.${index}.duration.startDate`}>
-                              {({ field, form }) => (
-                                <LocalizationProvider
-                                  dateAdapter={AdapterDayjs}
-                                >
-                                  <DatePicker
+                          <Grid
+                            container
+                            key={index}
+                            rowSpacing={3}
+                            justifyContent="space-between"
+                          >
+                            <Grid item xs={12} sm={6}>
+                              <Field name={`courses.${index}.courseTitle`}>
+                                {({ field, form }) => (
+                                  <TextField
+                                    variant="standard"
                                     {...field}
-                                    label="Starting From"
-                                    value={field.value || null}
-                                    onChange={(date) => {
-                                      form.setFieldValue(
-                                        `courses.${index}.duration.startDate`,
-                                        date
-                                      );
-                                    }}
+                                    label="Course Title"
+                                    sx={{ width: "96%" }}
                                   />
-                                </LocalizationProvider>
-                              )}
-                            </Field>
-
-                            <Field name={`courses.${index}.duration.endDate`}>
-                              {({ field, form }) => (
-                                <LocalizationProvider
-                                  dateAdapter={AdapterDayjs}
-                                >
-                                  <DatePicker
+                                )}
+                              </Field>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <Field name={`courses.${index}.courseAuthor`}>
+                                {({ field, form }) => (
+                                  <TextField
+                                    variant="standard"
                                     {...field}
-                                    label="End Date"
-                                    value={field.value || null}
-                                    onChange={(date) => {
-                                      form.setFieldValue(
-                                        `courses.${index}.duration.endDate`,
-                                        date
-                                      );
-                                    }}
+                                    label="Course Author"
+                                    sx={{ width: "96%" }}
                                   />
-                                </LocalizationProvider>
-                              )}
-                            </Field>
-
-                            <CustomButton
-                              variant="outlined"
-                              onClick={() => remove(index)}
-                            >
-                              Remove Experience
-                            </CustomButton>
-                          </div>
+                                )}
+                              </Field>
+                            </Grid>
+                            <Grid item xs={12} sm={12}>
+                              <Field
+                                name={`courses.${index}.courseDescription`}
+                              >
+                                {({ field, form }) => (
+                                  <TextField
+                                    variant="standard"
+                                    multiline
+                                    rows={4}
+                                    {...field}
+                                    label="Course Description"
+                                    sx={{ width: "100%" }}
+                                  />
+                                )}
+                              </Field>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <Field
+                                name={`courses.${index}.duration.startDate`}
+                              >
+                                {({ field, form }) => (
+                                  <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                  >
+                                    <DatePicker
+                                      {...field}
+                                      label="Starting From"
+                                      value={field.value || null}
+                                      onChange={(date) => {
+                                        form.setFieldValue(
+                                          `courses.${index}.duration.startDate`,
+                                          date
+                                        );
+                                      }}
+                                      sx={{ width: "96%" }}
+                                    />
+                                  </LocalizationProvider>
+                                )}
+                              </Field>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <Field name={`courses.${index}.duration.endDate`}>
+                                {({ field, form }) => (
+                                  <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                  >
+                                    <DatePicker
+                                      {...field}
+                                      label="End Date"
+                                      value={field.value || null}
+                                      onChange={(date) => {
+                                        form.setFieldValue(
+                                          `courses.${index}.duration.endDate`,
+                                          date
+                                        );
+                                      }}
+                                      sx={{ width: "96%" }}
+                                    />
+                                  </LocalizationProvider>
+                                )}
+                              </Field>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <CustomButton
+                                variant="outlined"
+                                onClick={() => remove(index)}
+                              >
+                                <IndeterminateCheckBox />
+                              </CustomButton>
+                              <CustomButton
+                                variant="outlined"
+                                onClick={() => push(workExpArr)}
+                              >
+                                <AddBoxIcon />
+                              </CustomButton>
+                            </Grid>
+                          </Grid>
                         ))}
-
-                        <CustomButton
-                          variant="outlined"
-                          onClick={() => push(workExpArr)}
-                        >
-                          Add Experience
-                        </CustomButton>
                       </div>
                     )}
                   </FieldArray>
