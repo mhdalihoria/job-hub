@@ -10,7 +10,7 @@ import useThemeStore from "@/stores/themeStore";
 const StyledFooter = styled(Box)(({ theme, islighttheme }) => ({
   background: islighttheme
     ? theme.palette.primary.main
-    : theme.palette.background.default,
+    : theme.palette.background.paper,
   color: islighttheme
     ? theme.palette.primary.contrastText
     : theme.palette.text.primary,

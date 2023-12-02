@@ -5,7 +5,7 @@ import Head from "next/head";
 
 const ContentStyled = styled(Box)(({ theme }) => ({
   flex: 1,
-  background: theme.palette.background.paper,
+  background: theme.palette.background.default,
 }));
 
 const containerStyle = {
