@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
+import React, { useState } from "react";
 // -----------------------------------------
 
 // -----------------------------------------
@@ -31,7 +31,9 @@ const validationSchema = Yup.object().shape({
   ),
   companyDescription: Yup.string().required("Required"),
   companySize: Yup.string().required("Required"),
-  phoneNum: Yup.number("Numbers Only").typeError('Provide Numbers Only').optional(),
+  phoneNum: Yup.number("Numbers Only")
+    .typeError("Provide Numbers Only")
+    .optional(),
   websiteLink: Yup.string().optional(),
   linkedInLink: Yup.string().optional(),
 });
@@ -61,8 +63,23 @@ const companySize = [
 // -----------------------------------------
 
 const EmployerForm = ({ goBack }) => {
-  const handleFormSubmit = (values) => {
+  const [formPreviewData, setFormPreviewData] = useState(null);
+  const [shouldPreview, setShouldPreview] = useState(false);
+
+  const handleInitialFormSubmit = (values) => {
     console.log("submit", values);
+    setFormPreviewData(values);
+    setShouldPreview(true);
+  };
+
+  const handleEditForm = () => {
+    setShouldPreview(false);
+  };
+
+  const handleFinalSubmit = () => {
+    // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
+    // This makes sure the info submitting is getting handled in a central place
+    console.log("final submit");
   };
 
   return (
@@ -79,250 +96,358 @@ const EmployerForm = ({ goBack }) => {
         </IconButton>
       </Stack>
       <Box sx={{ margin: "0 1rem" }}>
-        <Formik
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          onSubmit={handleFormSubmit}
-        >
-          {({ values, errors }) => {
-            return (
-              <Form>
-                <Grid container rowGap={2}>
-                  <Grid
-                    item
-                    xs={12}
-                    sx={{ marginTop: "1rem", marginBottom: "-.5rem" }}
-                  >
-                    <h2>Company Information:</h2>
-                  </Grid>
+        {shouldPreview ? (
+          <Grid container rowGap={4} columnSpacing={3}>
+            {formPreviewData.companyData.map((data, index) => (
+              <React.Fragment key={index}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    variant="standard"
+                    label="Company Name"
+                    sx={{ width: "100%" }}
+                    defaultValue={data.companyName}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    variant="standard"
+                    label="Company Industry"
+                    sx={{ width: "100%" }}
+                    defaultValue={data.companyIndustry}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+              </React.Fragment>
+            ))}
+            <Grid item xs={12}>
+              <TextField
+                variant="standard"
+                label="Company Size"
+                sx={{ width: "100%" }}
+                defaultValue={formPreviewData.companySize}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="standard"
+                multiline
+                rows={2}
+                label="Company Description"
+                sx={{ width: "100%" }}
+                defaultValue={formPreviewData.companyDescription}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
+            {formPreviewData.phoneNum && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="standard"
+                  label="Company Number"
+                  sx={{ width: "100%" }}
+                  defaultValue={formPreviewData.phoneNum}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+            )}
+            {formPreviewData.websiteLink && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="standard"
+                  label="Company Website Links"
+                  sx={{ width: "100%" }}
+                  defaultValue={formPreviewData.websiteLink}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+            )}
+            {formPreviewData.linkedInLink && (
+              <Grid item xs={12}>
+                <TextField
+                  variant="standard"
+                  label="Company LinkedIn Link"
+                  sx={{ width: "100%" }}
+                  defaultValue={formPreviewData.linkedInLink}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+            )}
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
+            >
+              <CustomButton variant="text" onClick={handleEditForm}>
+                Back
+              </CustomButton>
+              <CustomButton variant="contained" onClick={handleFinalSubmit}>
+                Submit
+              </CustomButton>
+            </Grid>
+          </Grid>
+        ) : (
+          <Formik
+            validationSchema={validationSchema}
+            initialValues={formPreviewData ? formPreviewData : initialValues}
+            onSubmit={handleInitialFormSubmit}
+          >
+            {({ values, errors }) => {
+              return (
+                <Form>
+                  <Grid container rowGap={2}>
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{ marginTop: "1rem", marginBottom: "-.5rem" }}
+                    >
+                      <h2>Company Information:</h2>
+                    </Grid>
 
-                  <Grid item xs={12}>
-                    <FieldArray name="companyData">
-                      {({ push, remove }) => (
-                        <div>
-                          {values.companyData.map((_, index) => (
-                            <Grid
-                              key={index}
-                              container
-                              columnSpacing={3}
-                              justifyContent="space-between"
-                            >
-                              <Grid item xs={12} sm={6}>
-                                <Field
-                                  name={`companyData.${index}.companyName`}
-                                >
-                                  {({ field, form }) => (
-                                    <TextField
-                                      variant="standard"
-                                      label="Company Name"
-                                      sx={{ width: "100%" }}
-                                      {...field}
-                                      error={
-                                        form.touched.companyData?.[index]
-                                          ?.companyName &&
-                                        Boolean(
+                    <Grid item xs={12}>
+                      <FieldArray name="companyData">
+                        {({ push, remove }) => (
+                          <div>
+                            {values.companyData.map((_, index) => (
+                              <Grid
+                                key={index}
+                                container
+                                columnSpacing={3}
+                                justifyContent="space-between"
+                              >
+                                <Grid item xs={12} sm={6}>
+                                  <Field
+                                    name={`companyData.${index}.companyName`}
+                                  >
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        label="Company Name"
+                                        sx={{ width: "100%" }}
+                                        {...field}
+                                        error={
+                                          form.touched.companyData?.[index]
+                                            ?.companyName &&
+                                          Boolean(
+                                            form.errors.companyData?.[index]
+                                              ?.companyName
+                                          )
+                                        }
+                                        helperText={
+                                          form.touched.companyData?.[index]
+                                            ?.companyName &&
                                           form.errors.companyData?.[index]
                                             ?.companyName
-                                        )
-                                      }
-                                      helperText={
-                                        form.touched.companyData?.[index]
-                                          ?.companyName &&
-                                        form.errors.companyData?.[index]
-                                          ?.companyName
-                                      }
-                                    />
-                                  )}
-                                </Field>
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <Field
-                                  name={`companyData.${index}.companyIndustry`}
-                                >
-                                  {({ field, form }) => (
-                                    <FormControl
-                                      sx={{ width: "100%", height: "48px" }}
-                                      variant="standard"
-                                      error={
-                                        form.touched.companyData?.[index]
-                                          ?.companyIndustry &&
-                                        Boolean(
-                                          form.errors.companyData?.[index]
-                                            ?.companyIndustry
-                                        )
-                                      }
-                                    >
-                                      <InputLabel
-                                        id={`companyData.${index}.companyIndustry`}
+                                        }
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field
+                                    name={`companyData.${index}.companyIndustry`}
+                                  >
+                                    {({ field, form }) => (
+                                      <FormControl
+                                        sx={{ width: "100%", height: "48px" }}
+                                        variant="standard"
+                                        error={
+                                          form.touched.companyData?.[index]
+                                            ?.companyIndustry &&
+                                          Boolean(
+                                            form.errors.companyData?.[index]
+                                              ?.companyIndustry
+                                          )
+                                        }
                                       >
-                                        Industry
-                                      </InputLabel>
-                                      <Select label="Industry" {...field}>
-                                        {companyField.map((level) => (
-                                          <MenuItem key={level} value={level}>
-                                            {level}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                      {form.touched.companyData?.[index]
-                                        ?.companyIndustry &&
-                                        form.errors.companyData?.[index]
-                                          ?.companyIndustry && (
-                                          <FormHelperText sx={{ color: "red" }}>
-                                            {
-                                              form.errors.companyData?.[index]
-                                                ?.companyIndustry
-                                            }
-                                          </FormHelperText>
-                                        )}
-                                    </FormControl>
-                                  )}
-                                </Field>
+                                        <InputLabel
+                                          id={`companyData.${index}.companyIndustry`}
+                                        >
+                                          Industry
+                                        </InputLabel>
+                                        <Select label="Industry" {...field}>
+                                          {companyField.map((level) => (
+                                            <MenuItem key={level} value={level}>
+                                              {level}
+                                            </MenuItem>
+                                          ))}
+                                        </Select>
+                                        {form.touched.companyData?.[index]
+                                          ?.companyIndustry &&
+                                          form.errors.companyData?.[index]
+                                            ?.companyIndustry && (
+                                            <FormHelperText
+                                              sx={{ color: "red" }}
+                                            >
+                                              {
+                                                form.errors.companyData?.[index]
+                                                  ?.companyIndustry
+                                              }
+                                            </FormHelperText>
+                                          )}
+                                      </FormControl>
+                                    )}
+                                  </Field>
+                                </Grid>
                               </Grid>
-                            </Grid>
-                          ))}
-                        </div>
-                      )}
-                    </FieldArray>
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <Field name={`companySize`}>
-                      {({ field, form }) => (
-                        <FormControl
-                          sx={{ width: "100%", height: "48px" }}
-                          variant="standard"
-                          error={
-                            form.touched.companySize &&
-                            Boolean(form.errors.companySize)
-                          }
-                        >
-                          <InputLabel id={`companySize`}>
-                            Company Size
-                          </InputLabel>
-                          <Select label="Company Size" {...field}>
-                            {companySize.map((level) => (
-                              <MenuItem key={level} value={level}>
-                                {level}
-                              </MenuItem>
                             ))}
-                          </Select>
-                          {form.touched.companySize &&
-                            form.errors.companySize && (
-                              <FormHelperText sx={{ color: "red" }}>
-                                {form.errors.companySize}
-                              </FormHelperText>
-                            )}
-                        </FormControl>
-                      )}
-                    </Field>
-                  </Grid>
+                          </div>
+                        )}
+                      </FieldArray>
+                    </Grid>
 
-                  <Grid item xs={12} sm={12}>
-                    <Field name="companyDescription">
-                      {({ field, form }) => (
-                        <TextField
-                          variant="standard"
-                          multiline
-                          rows={4}
-                          {...field}
-                          label="Company Description"
-                          sx={{ width: "100%" }}
-                          error={
-                            form.touched.companyDescription &&
-                            Boolean(form.errors.companyDescription)
-                          }
-                          helperText={
-                            form.touched.companyDescription &&
-                            form.errors.companyDescription
-                          }
-                        />
-                      )}
-                    </Field>
-                  </Grid>
-
-                  {/* Optional Fields */}
-                  <Grid item xs={12} sx={{ margin: "2rem 0" }}>
-                    <Divider>Optional</Divider>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sx={{ marginTop: "-.5rem", marginBottom: "-0.6rem" }}
-                  >
-                    <h2>Education & Personal Info:</h2>
-                  </Grid>
-                  <Grid item xs={12} rowSpacing={3}>
-                    <Field name="phoneNum" variant="outlined" fullWidth>
-                      {({ form, field }) => (
-                        <>
-                          <TextField
-                            id="phoneNum"
+                    <Grid item xs={12}>
+                      <Field name={`companySize`}>
+                        {({ field, form }) => (
+                          <FormControl
+                            sx={{ width: "100%", height: "48px" }}
                             variant="standard"
-                            label={"Phone Number (001 123 456 789)"}
-                            {...field}
-                            fullWidth
                             error={
-                              form.touched.phoneNum &&
-                              Boolean(form.errors.phoneNum)
+                              form.touched.companySize &&
+                              Boolean(form.errors.companySize)
+                            }
+                          >
+                            <InputLabel id={`companySize`}>
+                              Company Size
+                            </InputLabel>
+                            <Select label="Company Size" {...field}>
+                              {companySize.map((level) => (
+                                <MenuItem key={level} value={level}>
+                                  {level}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            {form.touched.companySize &&
+                              form.errors.companySize && (
+                                <FormHelperText sx={{ color: "red" }}>
+                                  {form.errors.companySize}
+                                </FormHelperText>
+                              )}
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Grid>
+
+                    <Grid item xs={12} sm={12}>
+                      <Field name="companyDescription">
+                        {({ field, form }) => (
+                          <TextField
+                            variant="standard"
+                            multiline
+                            rows={4}
+                            {...field}
+                            label="Company Description"
+                            sx={{ width: "100%" }}
+                            error={
+                              form.touched.companyDescription &&
+                              Boolean(form.errors.companyDescription)
                             }
                             helperText={
-                              form.touched.phoneNum && form.errors.phoneNum
+                              form.touched.companyDescription &&
+                              form.errors.companyDescription
                             }
                           />
-                        </>
-                      )}
-                    </Field>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Field name="websiteLink" variant="outlined" fullWidth>
-                      {({ form, field }) => (
-                        <>
-                          <TextField
-                            id="websiteLink"
-                            variant="standard"
-                            label={"Company Website"}
-                            {...field}
-                            fullWidth
-                          />
-                        </>
-                      )}
-                    </Field>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Field name="linkedInLink" variant="outlined" fullWidth>
-                      {({ form, field }) => (
-                        <>
-                          <TextField
-                            id="linkedInLink"
-                            variant="standard"
-                            label={"LinkedIn Profile"}
-                            {...field}
-                            fullWidth
-                          />
-                        </>
-                      )}
-                    </Field>
-                  </Grid>
+                        )}
+                      </Field>
+                    </Grid>
 
-                  <Grid item xs={12} justifyContent={"flex-end"}>
-                    <CustomButton
-                      type="submit"
-                      variant="contained"
-                      sx={{
-                        width: "100%",
-                        fontSize: "1.2rem",
-                        marginTop: "2rem",
-                      }}
+                    {/* Optional Fields */}
+                    <Grid item xs={12} sx={{ margin: "2rem 0" }}>
+                      <Divider>Optional</Divider>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{ marginTop: "-.5rem", marginBottom: "-0.6rem" }}
                     >
-                      Submit Form
-                    </CustomButton>
+                      <h2>Education & Personal Info:</h2>
+                    </Grid>
+                    <Grid item xs={12} rowSpacing={3}>
+                      <Field name="phoneNum" variant="outlined" fullWidth>
+                        {({ form, field }) => (
+                          <>
+                            <TextField
+                              id="phoneNum"
+                              variant="standard"
+                              label={"Phone Number (001 123 456 789)"}
+                              {...field}
+                              fullWidth
+                              error={
+                                form.touched.phoneNum &&
+                                Boolean(form.errors.phoneNum)
+                              }
+                              helperText={
+                                form.touched.phoneNum && form.errors.phoneNum
+                              }
+                            />
+                          </>
+                        )}
+                      </Field>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Field name="websiteLink" variant="outlined" fullWidth>
+                        {({ form, field }) => (
+                          <>
+                            <TextField
+                              id="websiteLink"
+                              variant="standard"
+                              label={"Company Website"}
+                              {...field}
+                              fullWidth
+                            />
+                          </>
+                        )}
+                      </Field>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Field name="linkedInLink" variant="outlined" fullWidth>
+                        {({ form, field }) => (
+                          <>
+                            <TextField
+                              id="linkedInLink"
+                              variant="standard"
+                              label={"LinkedIn Profile"}
+                              {...field}
+                              fullWidth
+                            />
+                          </>
+                        )}
+                      </Field>
+                    </Grid>
+
+                    <Grid item xs={12} justifyContent={"flex-end"}>
+                      <CustomButton
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                          width: "100%",
+                          fontSize: "1.2rem",
+                          marginTop: "2rem",
+                        }}
+                      >
+                        Submit Form
+                      </CustomButton>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </Form>
-            );
-          }}
-        </Formik>
+                </Form>
+              );
+            }}
+          </Formik>
+        )}
       </Box>
     </Box>
   );
