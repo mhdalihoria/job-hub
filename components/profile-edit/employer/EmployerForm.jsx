@@ -20,7 +20,6 @@ import * as Yup from "yup";
 import { useState } from "react";
 // -----------------------------------------
 
-
 // -----------------------------------------
 
 const validationSchema = Yup.object().shape({
@@ -32,7 +31,7 @@ const validationSchema = Yup.object().shape({
   ),
   companyDescription: Yup.string().required("Required"),
   companySize: Yup.string().required("Required"),
-  phoneNum: Yup.number("Numbers Only").optional(),
+  phoneNum: Yup.number("Numbers Only").typeError('Provide Numbers Only').optional(),
   websiteLink: Yup.string().optional(),
   linkedInLink: Yup.string().optional(),
 });
@@ -62,7 +61,6 @@ const companySize = [
 // -----------------------------------------
 
 const EmployerForm = ({ goBack }) => {
-
   const handleFormSubmit = (values) => {
     console.log("submit", values);
   };
@@ -264,6 +262,13 @@ const EmployerForm = ({ goBack }) => {
                             label={"Phone Number (001 123 456 789)"}
                             {...field}
                             fullWidth
+                            error={
+                              form.touched.phoneNum &&
+                              Boolean(form.errors.phoneNum)
+                            }
+                            helperText={
+                              form.touched.phoneNum && form.errors.phoneNum
+                            }
                           />
                         </>
                       )}
