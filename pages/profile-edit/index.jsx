@@ -17,7 +17,6 @@ import SeekerForm from "@/components/profile-edit/jobSeeker/SeekerForm";
 import EmployerForm from "@/components/profile-edit/employer/EmployerForm";
 
 const FormContainerStyled = styled("div")(({ theme }) => ({
-  background: theme.palette.background.paper,
   padding: "5rem 1rem",
 }));
 
