@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   Divider,
+  Typography,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -59,8 +60,10 @@ const validationSchema = Yup.object().shape({
       courseTitle: Yup.string().required("Required"),
       courseAuthor: Yup.string().required("Required"),
       courseDescription: Yup.string().required("Required"),
-      startDate: Yup.date().nullable().required("Required"),
-      endDate: Yup.date().nullable().required("Required"),
+      duration: Yup.object().shape({
+        startDate: Yup.string().required("Required"),
+        endDate: Yup.string().required("Required"),
+      }),
     })
   ),
   reseme: Yup.mixed().required("Required"),
@@ -83,8 +86,7 @@ const courseObj = {
   courseTitle: "",
   courseAuthor: "",
   courseDescription: "",
-  startDate: null,
-  endDate: null,
+  duration: { startDate: null, endDate: null },
 };
 const initialValues = {
   jobTitle: "",
@@ -149,6 +151,9 @@ const SeekerForm = ({ goBack }) => {
         {shouldPreview ? (
           <Grid container rowGap={2} columnSpacing={3}>
             <Grid item xs={12} sx={6}>
+              <Typography variant="h6" gutterBottom sx={{ marginTop: "1em" }}>
+                Job Title:
+              </Typography>
               <TextField
                 variant="standard"
                 label="Desired Job Title"
@@ -161,6 +166,15 @@ const SeekerForm = ({ goBack }) => {
             </Grid>
             {formPreviewData.skills.map((data, index) => (
               <React.Fragment key={index}>
+                <Grid item xs={12} sm={12}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ marginTop: "1em" }}
+                  >
+                    Skills:
+                  </Typography>
+                </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     variant="standard"
@@ -187,6 +201,15 @@ const SeekerForm = ({ goBack }) => {
             ))}
             {formPreviewData.workExp.map((data, index) => (
               <React.Fragment key={index}>
+                <Grid item xs={12} sm={12}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ marginTop: "1em" }}
+                  >
+                    Work Experiences:
+                  </Typography>
+                </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     variant="standard"
@@ -242,6 +265,15 @@ const SeekerForm = ({ goBack }) => {
             ))}
             {formPreviewData.phoneNum && (
               <Grid item xs={12}>
+                <Grid item xs={12} sm={12}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ marginTop: "1em" }}
+                  >
+                    Phone Number:
+                  </Typography>
+                </Grid>
                 <TextField
                   variant="standard"
                   label="Phone Number"
@@ -255,6 +287,9 @@ const SeekerForm = ({ goBack }) => {
             )}
             {formPreviewData.websiteLink && (
               <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom sx={{ marginTop: "1em" }}>
+                  Website or Portfolio Link:
+                </Typography>
                 <TextField
                   variant="standard"
                   label="Website Link"
@@ -268,6 +303,9 @@ const SeekerForm = ({ goBack }) => {
             )}
             {formPreviewData.linkedInLink && (
               <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom sx={{ marginTop: "1em" }}>
+                  LinkedIn Profile:
+                </Typography>
                 <TextField
                   variant="standard"
                   label="LinkedIn Profile"
@@ -281,6 +319,9 @@ const SeekerForm = ({ goBack }) => {
             )}
             {formPreviewData.githubLink && (
               <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom sx={{ marginTop: "1em" }}>
+                  GitHub Profile:
+                </Typography>
                 <TextField
                   variant="standard"
                   label="GitHub Profile"
@@ -302,6 +343,15 @@ const SeekerForm = ({ goBack }) => {
                     columnSpacing={3}
                     justifyContent="space-between"
                   >
+                    <Grid item xs={12} sm={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Courses:
+                      </Typography>
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
                         variant="standard"
@@ -359,10 +409,13 @@ const SeekerForm = ({ goBack }) => {
             )}
 
             <Grid item xs={12} sx={6}>
+              <Typography variant="h6" gutterBottom sx={{ marginTop: "1em" }}>
+                Uploaded Reseme:
+              </Typography>
               <iframe
                 src={URL.createObjectURL(formPreviewData.reseme)}
                 width="100%"
-                height="200px"
+                height="300px"
               />
             </Grid>
             <Grid
@@ -385,7 +438,6 @@ const SeekerForm = ({ goBack }) => {
             onSubmit={handleFormSubmit}
           >
             {({ values, errors }) => {
-              console.log(errors.courses);
               return (
                 <Form>
                   <Grid container rowGap={2}>
@@ -397,6 +449,9 @@ const SeekerForm = ({ goBack }) => {
                       <h2>Previous Skills & Experience:</h2>
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography variant="h6" gutterBottom>
+                        Upload Reseme:
+                      </Typography>
                       <Field name="reseme">
                         {({ field, form }) => {
                           return (
@@ -450,6 +505,13 @@ const SeekerForm = ({ goBack }) => {
                     </Grid>
 
                     <Grid item xs={12} rowSpacing={3}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Desired Job Title:
+                      </Typography>
                       <Field name="jobTitle" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
@@ -476,6 +538,13 @@ const SeekerForm = ({ goBack }) => {
                     </Grid>
 
                     <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "2em" }}
+                      >
+                        Skills:
+                      </Typography>
                       <FieldArray name="skills">
                         {({ push, remove }) => (
                           <div>
@@ -590,6 +659,13 @@ const SeekerForm = ({ goBack }) => {
                       </FieldArray>
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Work Experience:
+                      </Typography>
                       <FieldArray name="workExp">
                         {({ push, remove }) => (
                           <div>
@@ -791,6 +867,13 @@ const SeekerForm = ({ goBack }) => {
                       </FieldArray>
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Courses:
+                      </Typography>
                       <FieldArray name="courses">
                         {({ push, remove }) => (
                           <div>
@@ -936,7 +1019,6 @@ const SeekerForm = ({ goBack }) => {
                                               );
                                             }}
                                             sx={{ width: "100%" }}
-                                            
                                           />
                                         </LocalizationProvider>
                                         <ErrorMessageStyled>
@@ -993,6 +1075,13 @@ const SeekerForm = ({ goBack }) => {
                       <h2>Education & Personal Info:</h2>
                     </Grid>
                     <Grid item xs={12} rowSpacing={3}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Phone Number:
+                      </Typography>
                       <Field name="phoneNum" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
@@ -1008,6 +1097,13 @@ const SeekerForm = ({ goBack }) => {
                       </Field>
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Website or Portfolio Link:
+                      </Typography>
                       <Field name="websiteLink" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
@@ -1023,6 +1119,13 @@ const SeekerForm = ({ goBack }) => {
                       </Field>
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        LinkedIn Profile:
+                      </Typography>
                       <Field name="linkedInLink" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
@@ -1038,6 +1141,13 @@ const SeekerForm = ({ goBack }) => {
                       </Field>
                     </Grid>
                     <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        GitHub Profile:
+                      </Typography>
                       <Field name="githubLink" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
