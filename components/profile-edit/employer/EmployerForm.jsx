@@ -69,15 +69,17 @@ const companySize = [
 ];
 // -----------------------------------------
 
-const EmployerForm = ({ goBack }) => {
-  const { userData, setUserData } = useUserStore();
-  const router = useRouter();
+const EmployerForm = ({
+  goBack,
+  handleCompleteUsrProfile,
+  loading,
+  snackbarMsg,
+  snackbarOpen,
+  setSnackbarOpen,
+}) => {
   const [formPreviewData, setFormPreviewData] = useState(null);
   const [shouldPreview, setShouldPreview] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState(null);
-  const [loading, setLoading] = useState(false);
-  // console.log(userData);
+
 
   const handleInitialFormSubmit = (values) => {
     console.log("submit", values);
@@ -89,36 +91,12 @@ const EmployerForm = ({ goBack }) => {
     setShouldPreview(false);
   };
 
-  const handleFinalSubmit = async () => {
-    // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
-    // This makes sure the info submitting is getting handled in a central place
-    try {
-      console.log("final submit");
-      setLoading(true);
-
-      await setUserData({ ...formPreviewData, isUserInfoComplete: true });
-
-      const docRef = doc(firestore, "users", auth.currentUser.uid);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        await setDoc(docRef, userData);
-        setLoading(false);
-        setSnackbarOpen(true)
-        setSnackbarMsg("Information Updated Successfully")
-
-        setTimeout(()=>{
-          router.push("/")
-        }, 3500)
-      }
-    } catch (err) {
-      console.error(err);
-      setSnackbarMsg(err)
-    }
+  const handleFinalSubmit = () => {
+    handleCompleteUsrProfile({ ...formPreviewData, isUserInfoComplete: true });
   };
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -519,8 +497,16 @@ const EmployerForm = ({ goBack }) => {
           </Formik>
         )}
       </Box>
-      <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           {snackbarMsg}
         </Alert>
       </Snackbar>
