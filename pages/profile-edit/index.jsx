@@ -15,6 +15,14 @@ import WorkIcon from "@mui/icons-material/Work";
 import { useState } from "react";
 import SeekerForm from "@/components/profile-edit/jobSeeker/SeekerForm";
 import EmployerForm from "@/components/profile-edit/employer/EmployerForm";
+import useUserStore from "@/stores/userStore";
+import { auth, firestore } from "@/lib/firebase";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
+
+// -----------------------------------------
+
+// -----------------------------------------
 
 const FormContainerStyled = styled("div")(({ theme }) => ({
   padding: "5rem 1rem",
@@ -64,23 +72,61 @@ const IconStyles = { fontSize: 40 };
 
 const ProfileForm = () => {
   const theme = useTheme();
+  const router = useRouter();
+  const { userData, setUserData } = useUserStore();
   const [formData, setFormData] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  console.log(userRole);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChooseUserRole = (role) => {
     setUserRole(role);
   };
 
   const handleGoBack = () => {
-    setUserRole(null)
-  }
+    setUserRole(null);
+  };
+
+  const handleCompleteUsrProfile = async (inputtedData) => {
+    try {
+      setLoading(true);
+
+      await setUserData(inputtedData);
+
+      const docRef = doc(firestore, "users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        await setDoc(docRef, userData);
+        setLoading(false);
+        setSnackbarOpen(true);
+        setSnackbarMsg("Information Updated Successfully");
+
+        setTimeout(() => {
+          router.push("/");
+        }, 3500);
+      }
+    } catch (err) {
+      console.error(err);
+      setSnackbarMsg(err);
+    }
+  };
 
   const displayedForm = () => {
     if (userRole === "seeker") {
-      return <SeekerForm goBack={handleGoBack}/>;
+      return <SeekerForm goBack={handleGoBack} />;
     } else if (userRole === "employer") {
-      return <EmployerForm goBack={handleGoBack}/>;
+      return (
+        <EmployerForm
+          goBack={handleGoBack}
+          handleCompleteUsrProfile={handleCompleteUsrProfile}
+          loading={loading}
+          snackbarMsg={snackbarMsg}
+          snackbarOpen={snackbarOpen}
+          setSnackbarOpen={setSnackbarOpen}
+        />
+      );
     } else {
       return (
         <ContainerStyled>
@@ -89,12 +135,12 @@ const ProfileForm = () => {
               marginBottom: "2em",
               marginTop: "1.5em",
               fontSize: "1.5rem",
-              textAlign: "center"
+              textAlign: "center",
             }}
           >
             Which of Those Are You?
           </p>
-          <Grid container >
+          <Grid container>
             <Grid item xs={12} sm={6} sx={{ padding: "1rem" }}>
               <UserRolePaper elevation={2}>
                 <UserRoleButton onClick={() => handleChooseUserRole("seeker")}>
