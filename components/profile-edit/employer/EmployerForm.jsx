@@ -9,15 +9,22 @@ import {
   TextField,
   FormHelperText,
   FormControl,
-  styled,
+  Typography,
   InputLabel,
   Select,
   MenuItem,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
 import React, { useState } from "react";
+import useUserStore from "@/stores/userStore";
+import { auth, firestore } from "@/lib/firebase";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
+
 // -----------------------------------------
 
 // -----------------------------------------
@@ -63,8 +70,14 @@ const companySize = [
 // -----------------------------------------
 
 const EmployerForm = ({ goBack }) => {
+  const { userData, setUserData } = useUserStore();
+  const router = useRouter();
   const [formPreviewData, setFormPreviewData] = useState(null);
   const [shouldPreview, setShouldPreview] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // console.log(userData);
 
   const handleInitialFormSubmit = (values) => {
     console.log("submit", values);
@@ -76,10 +89,40 @@ const EmployerForm = ({ goBack }) => {
     setShouldPreview(false);
   };
 
-  const handleFinalSubmit = () => {
+  const handleFinalSubmit = async () => {
     // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
     // This makes sure the info submitting is getting handled in a central place
-    console.log("final submit");
+    try {
+      console.log("final submit");
+      setLoading(true);
+
+      await setUserData({ ...formPreviewData, isUserInfoComplete: true });
+
+      const docRef = doc(firestore, "users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        await setDoc(docRef, userData);
+        setLoading(false);
+        setSnackbarOpen(true)
+        setSnackbarMsg("Information Updated Successfully")
+
+        setTimeout(()=>{
+          router.push("/")
+        }, 3500)
+      }
+    } catch (err) {
+      console.error(err);
+      setSnackbarMsg(err)
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
   };
 
   return (
@@ -100,6 +143,11 @@ const EmployerForm = ({ goBack }) => {
           <Grid container rowGap={4} columnSpacing={3}>
             {formPreviewData.companyData.map((data, index) => (
               <React.Fragment key={index}>
+                <Grid item xs={12} sm={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Company Information:
+                  </Typography>
+                </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     variant="standard"
@@ -150,6 +198,9 @@ const EmployerForm = ({ goBack }) => {
             </Grid>
             {formPreviewData.phoneNum && (
               <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                  Company Number:
+                </Typography>
                 <TextField
                   variant="standard"
                   label="Company Number"
@@ -163,6 +214,9 @@ const EmployerForm = ({ goBack }) => {
             )}
             {formPreviewData.websiteLink && (
               <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                  Copmany Website:
+                </Typography>
                 <TextField
                   variant="standard"
                   label="Company Website Links"
@@ -176,6 +230,9 @@ const EmployerForm = ({ goBack }) => {
             )}
             {formPreviewData.linkedInLink && (
               <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                  LinkedIn Profile:
+                </Typography>
                 <TextField
                   variant="standard"
                   label="Company LinkedIn Link"
@@ -195,7 +252,11 @@ const EmployerForm = ({ goBack }) => {
               <CustomButton variant="text" onClick={handleEditForm}>
                 Back
               </CustomButton>
-              <CustomButton variant="contained" onClick={handleFinalSubmit}>
+              <CustomButton
+                variant="contained"
+                disabled={loading}
+                onClick={handleFinalSubmit}
+              >
                 Submit
               </CustomButton>
             </Grid>
@@ -374,12 +435,15 @@ const EmployerForm = ({ goBack }) => {
                       xs={12}
                       sx={{ marginTop: "-.5rem", marginBottom: "-0.6rem" }}
                     >
-                      <h2>Education & Personal Info:</h2>
+                      <h2>Additional Info:</h2>
                     </Grid>
                     <Grid item xs={12} rowSpacing={3}>
                       <Field name="phoneNum" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
+                            <Typography variant="h6" gutterBottom>
+                              Phone Number:
+                            </Typography>
                             <TextField
                               id="phoneNum"
                               variant="standard"
@@ -402,6 +466,9 @@ const EmployerForm = ({ goBack }) => {
                       <Field name="websiteLink" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
+                            <Typography variant="h6" gutterBottom>
+                              Website Link:
+                            </Typography>
                             <TextField
                               id="websiteLink"
                               variant="standard"
@@ -417,6 +484,9 @@ const EmployerForm = ({ goBack }) => {
                       <Field name="linkedInLink" variant="outlined" fullWidth>
                         {({ form, field }) => (
                           <>
+                            <Typography variant="h6" gutterBottom>
+                              LinkedIn Profile:
+                            </Typography>
                             <TextField
                               id="linkedInLink"
                               variant="standard"
@@ -449,6 +519,11 @@ const EmployerForm = ({ goBack }) => {
           </Formik>
         )}
       </Box>
+      <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
+          {snackbarMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
