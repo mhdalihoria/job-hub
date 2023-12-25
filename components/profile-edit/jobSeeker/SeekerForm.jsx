@@ -15,6 +15,8 @@ import {
   MenuItem,
   Divider,
   Typography,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -24,6 +26,8 @@ import * as Yup from "yup";
 import IndeterminateCheckBox from "@mui/icons-material/IndeterminateCheckBox";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import React, { useState } from "react";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 // -----------------------------------------
 
 const ErrorMessageStyled = styled("div")(({ theme }) => ({
@@ -103,11 +107,19 @@ const initialValues = {
 const skillLevels = ["beginner", "intermediate", "expert"];
 // -----------------------------------------
 
-const SeekerForm = ({ goBack }) => {
+const SeekerForm = ({
+  goBack,
+  userData,
+  handleCompleteUsrProfile,
+  loading,
+  snackbarMsg,
+  snackbarOpen,
+  setSnackbarOpen,
+}) => {
   const [fileName, setFileName] = useState("");
   const [shouldPreview, setShouldPreview] = useState(false);
   const [formPreviewData, setFormPreviewData] = useState(null);
-
+  console.log(formPreviewData);
   const handleOnImageChange = (event, form) => {
     const file = event.target.files[0];
     setFileName(file.name);
@@ -128,10 +140,35 @@ const SeekerForm = ({ goBack }) => {
     setShouldPreview(false);
   };
 
-  const handleFinalSubmit = () => {
+  const handleFinalSubmit = async () => {
     // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
     // This makes sure the info submitting is getting handled in a central place
     console.log("final submit");
+    try {
+      const userId = userData.uid
+      const timestamp = new Date().getTime();
+      // replace "formPreviewData.reseme.name" with the name of the file uploaded
+      const fileName = `${userId}/${timestamp}_${formPreviewData.reseme.name}`;
+      const storageRef = ref(storage, fileName);
+      console.log(storageRef);
+      // replace "formPreviewData.reseme" with the actual file uploaded
+      await uploadBytes(storageRef, formPreviewData.reseme).then((snapshot) => {
+        console.log("Uploaded a blob or file!", snapshot);
+      });
+
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log("Download URL:", downloadURL);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
   };
 
   return (
@@ -1179,6 +1216,19 @@ const SeekerForm = ({ goBack }) => {
           </Formik>
         )}
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
