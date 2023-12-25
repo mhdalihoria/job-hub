@@ -54,6 +54,15 @@ const validationSchema = Yup.object().shape({
       // }).required("Required"),
     })
   ),
+  courses: Yup.array().of(
+    Yup.object().shape({
+      courseTitle: Yup.string().required("Required"),
+      courseAuthor: Yup.string().required("Required"),
+      courseDescription: Yup.string().required("Required"),
+      startDate: Yup.date().nullable().required("Required"),
+      endDate: Yup.date().nullable().required("Required"),
+    })
+  ),
   reseme: Yup.mixed().required("Required"),
   phoneNum: Yup.number("Numbers Only")
     .typeError("Provide Numbers Only")
@@ -61,44 +70,32 @@ const validationSchema = Yup.object().shape({
   websiteLink: Yup.string().optional(),
   linkedInLink: Yup.string().optional(),
   githubLink: Yup.string().optional(),
-  courses: Yup.array().of(
-    Yup.object().shape({
-      courseTitle: Yup.string().optional(),
-      courseAuthor: Yup.string().optional(),
-      courseDescription: Yup.string().optional(),
-      startDate: Yup.date().nullable().optional(),
-      endDate: Yup.date().nullable().optional(),
-    })
-  ),
 });
 
-const workExpArr = [
-  {
-    jobTitle: "",
-    companyName: "",
-    jobRole: "",
-    duration: { startDate: null, endDate: null },
-  },
-];
+const workExpObj = {
+  jobTitle: "",
+  companyName: "",
+  jobRole: "",
+  duration: { startDate: null, endDate: null },
+};
 
+const courseObj = {
+  courseTitle: "",
+  courseAuthor: "",
+  courseDescription: "",
+  startDate: null,
+  endDate: null,
+};
 const initialValues = {
   jobTitle: "",
   skills: [{ skillName: "", skillLvl: "" }],
-  workExp: workExpArr,
+  workExp: [workExpObj],
   reseme: "",
   phoneNum: "",
   websiteLink: "",
   linkedInLink: "",
   githubLink: "",
-  courses: [
-    {
-      courseTitle: "",
-      courseAuthor: "",
-      courseDescription: "",
-      startDate: null,
-      endDate: null,
-    },
-  ],
+  courses: [courseObj],
 };
 
 const skillLevels = ["beginner", "intermediate", "expert"];
@@ -109,14 +106,11 @@ const SeekerForm = ({ goBack }) => {
   const [shouldPreview, setShouldPreview] = useState(false);
   const [formPreviewData, setFormPreviewData] = useState(null);
 
-  console.log(formPreviewData && URL.createObjectURL(formPreviewData.reseme));
-
   const handleOnImageChange = (event, form) => {
     const file = event.target.files[0];
     setFileName(file.name);
     form.setFieldValue("reseme", file);
 
-    // Your custom logic or validations here
     if (file && file.size / (1024 * 1024) > 2) {
       form.setFieldError("reseme", "Max allowed size is 2MB");
     }
@@ -126,6 +120,16 @@ const SeekerForm = ({ goBack }) => {
     console.log("submit", values);
     setFormPreviewData(values);
     setShouldPreview(true);
+  };
+
+  const handleEditForm = () => {
+    setShouldPreview(false);
+  };
+
+  const handleFinalSubmit = () => {
+    // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
+    // This makes sure the info submitting is getting handled in a central place
+    console.log("final submit");
   };
 
   return (
@@ -143,7 +147,7 @@ const SeekerForm = ({ goBack }) => {
       </Stack>
       <Box sx={{ margin: "0 1rem" }}>
         {shouldPreview ? (
-          <Grid container rowGap={2}>
+          <Grid container rowGap={2} columnSpacing={3}>
             <Grid item xs={12} sx={6}>
               <TextField
                 variant="standard"
@@ -361,14 +365,27 @@ const SeekerForm = ({ goBack }) => {
                 height="200px"
               />
             </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
+            >
+              <CustomButton variant="text" onClick={handleEditForm}>
+                Back
+              </CustomButton>
+              <CustomButton variant="contained" onClick={handleFinalSubmit}>
+                Submit
+              </CustomButton>
+            </Grid>
           </Grid>
         ) : (
           <Formik
             validationSchema={validationSchema}
-            initialValues={initialValues}
+            initialValues={formPreviewData ? formPreviewData : initialValues}
             onSubmit={handleFormSubmit}
           >
             {({ values, errors }) => {
+              console.log(errors.courses);
               return (
                 <Form>
                   <Grid container rowGap={2}>
@@ -549,12 +566,14 @@ const SeekerForm = ({ goBack }) => {
                                     marginTop: "-.7rem",
                                   }}
                                 >
-                                  <CustomButton
-                                    variant="outlined"
-                                    onClick={() => remove(index)}
-                                  >
-                                    Remove Skill
-                                  </CustomButton>
+                                  {index !== 0 && (
+                                    <CustomButton
+                                      variant="outlined"
+                                      onClick={() => remove(index)}
+                                    >
+                                      Remove Skill
+                                    </CustomButton>
+                                  )}
                                   <CustomButton
                                     variant="outlined"
                                     onClick={() =>
@@ -750,15 +769,17 @@ const SeekerForm = ({ goBack }) => {
                                     marginBottom: "1rem",
                                   }}
                                 >
+                                  {index !== 0 && (
+                                    <CustomButton
+                                      variant="outlined"
+                                      onClick={() => remove(index)}
+                                    >
+                                      Remove Experience
+                                    </CustomButton>
+                                  )}
                                   <CustomButton
                                     variant="outlined"
-                                    onClick={() => remove(index)}
-                                  >
-                                    Remove Experience
-                                  </CustomButton>
-                                  <CustomButton
-                                    variant="outlined"
-                                    onClick={() => push(workExpArr)}
+                                    onClick={() => push(workExpObj)}
                                   >
                                     Add Experience
                                   </CustomButton>
@@ -769,7 +790,197 @@ const SeekerForm = ({ goBack }) => {
                         )}
                       </FieldArray>
                     </Grid>
-
+                    <Grid item xs={12}>
+                      <FieldArray name="courses">
+                        {({ push, remove }) => (
+                          <div>
+                            {values.courses.map((_, index) => (
+                              <Grid
+                                container
+                                key={index}
+                                rowSpacing={3}
+                                columnSpacing={3}
+                                justifyContent="space-between"
+                              >
+                                <Grid item xs={12} sm={6}>
+                                  <Field name={`courses.${index}.courseTitle`}>
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        {...field}
+                                        label="Course Title"
+                                        sx={{ width: "100%" }}
+                                        error={
+                                          form.touched.courses?.[index]
+                                            ?.courseTitle &&
+                                          Boolean(
+                                            form.errors.courses?.[index]
+                                              ?.courseTitle
+                                          )
+                                        }
+                                        helperText={
+                                          form.touched.courses?.[index]
+                                            ?.courseTitle &&
+                                          form.errors.courses?.[index]
+                                            ?.courseTitle
+                                        }
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field name={`courses.${index}.courseAuthor`}>
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        {...field}
+                                        label="Course Author"
+                                        sx={{ width: "100%" }}
+                                        error={
+                                          form.touched.courses?.[index]
+                                            ?.courseAuthor &&
+                                          Boolean(
+                                            form.errors.courses?.[index]
+                                              ?.courseAuthor
+                                          )
+                                        }
+                                        helperText={
+                                          form.touched.courses?.[index]
+                                            ?.courseAuthor &&
+                                          form.errors.courses?.[index]
+                                            ?.courseAuthor
+                                        }
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                  <Field
+                                    name={`courses.${index}.courseDescription`}
+                                  >
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        multiline
+                                        rows={4}
+                                        {...field}
+                                        label="Course Description"
+                                        sx={{ width: "100%" }}
+                                        error={
+                                          form.touched.courses?.[index]
+                                            ?.courseDescription &&
+                                          Boolean(
+                                            form.errors.courses?.[index]
+                                              ?.courseDescription
+                                          )
+                                        }
+                                        helperText={
+                                          form.touched.courses?.[index]
+                                            ?.courseDescription &&
+                                          form.errors.courses?.[index]
+                                            ?.courseDescription
+                                        }
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field
+                                    name={`courses.${index}.duration.startDate`}
+                                  >
+                                    {({ field, form }) => (
+                                      <>
+                                        <LocalizationProvider
+                                          dateAdapter={AdapterDayjs}
+                                        >
+                                          <DatePicker
+                                            {...field}
+                                            label="Starting From"
+                                            value={field.value || null}
+                                            onChange={(date) => {
+                                              form.setFieldValue(
+                                                `courses.${index}.duration.startDate`,
+                                                date
+                                              );
+                                            }}
+                                            sx={{ width: "100%" }}
+                                          />
+                                        </LocalizationProvider>
+                                        <ErrorMessageStyled>
+                                          <ErrorMessage
+                                            name={`courses.${index}.duration.startDate`}
+                                            as={FormHelperText}
+                                          />
+                                        </ErrorMessageStyled>
+                                      </>
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field
+                                    name={`courses.${index}.duration.endDate`}
+                                  >
+                                    {({ field, form }) => (
+                                      <>
+                                        <LocalizationProvider
+                                          dateAdapter={AdapterDayjs}
+                                        >
+                                          <DatePicker
+                                            {...field}
+                                            label="End Date"
+                                            value={field.value || null}
+                                            onChange={(date) => {
+                                              form.setFieldValue(
+                                                `courses.${index}.duration.endDate`,
+                                                date
+                                              );
+                                            }}
+                                            sx={{ width: "100%" }}
+                                            
+                                          />
+                                        </LocalizationProvider>
+                                        <ErrorMessageStyled>
+                                          <ErrorMessage
+                                            name={`courses.${index}.duration.endDate`}
+                                            as={FormHelperText}
+                                          />
+                                        </ErrorMessageStyled>
+                                      </>
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    gap: "1rem",
+                                    marginTop: "-.7rem",
+                                    marginBottom: "1rem",
+                                  }}
+                                >
+                                  {index !== 0 && (
+                                    <CustomButton
+                                      variant="outlined"
+                                      onClick={() => remove(index)}
+                                    >
+                                      Remove Course
+                                    </CustomButton>
+                                  )}
+                                  <CustomButton
+                                    variant="outlined"
+                                    onClick={() => push(courseObj)}
+                                  >
+                                    Add Course
+                                  </CustomButton>
+                                </Grid>
+                              </Grid>
+                            ))}
+                          </div>
+                        )}
+                      </FieldArray>
+                    </Grid>
                     {/* Optional Fields */}
                     <Grid item xs={12}>
                       <Divider>Optional</Divider>
@@ -840,136 +1051,6 @@ const SeekerForm = ({ goBack }) => {
                           </>
                         )}
                       </Field>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FieldArray name="courses">
-                        {({ push, remove }) => (
-                          <div>
-                            {values.courses.map((_, index) => (
-                              <Grid
-                                container
-                                key={index}
-                                rowSpacing={3}
-                                columnSpacing={3}
-                                justifyContent="space-between"
-                              >
-                                <Grid item xs={12} sm={6}>
-                                  <Field name={`courses.${index}.courseTitle`}>
-                                    {({ field, form }) => (
-                                      <TextField
-                                        variant="standard"
-                                        {...field}
-                                        label="Course Title"
-                                        sx={{ width: "100%" }}
-                                      />
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                  <Field name={`courses.${index}.courseAuthor`}>
-                                    {({ field, form }) => (
-                                      <TextField
-                                        variant="standard"
-                                        {...field}
-                                        label="Course Author"
-                                        sx={{ width: "100%" }}
-                                      />
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={12}>
-                                  <Field
-                                    name={`courses.${index}.courseDescription`}
-                                  >
-                                    {({ field, form }) => (
-                                      <TextField
-                                        variant="standard"
-                                        multiline
-                                        rows={4}
-                                        {...field}
-                                        label="Course Description"
-                                        sx={{ width: "100%" }}
-                                      />
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                  <Field
-                                    name={`courses.${index}.duration.startDate`}
-                                  >
-                                    {({ field, form }) => (
-                                      <LocalizationProvider
-                                        dateAdapter={AdapterDayjs}
-                                      >
-                                        <DatePicker
-                                          {...field}
-                                          label="Starting From"
-                                          value={field.value || null}
-                                          onChange={(date) => {
-                                            form.setFieldValue(
-                                              `courses.${index}.duration.startDate`,
-                                              date
-                                            );
-                                          }}
-                                          sx={{ width: "100%" }}
-                                        />
-                                      </LocalizationProvider>
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                  <Field
-                                    name={`courses.${index}.duration.endDate`}
-                                  >
-                                    {({ field, form }) => (
-                                      <LocalizationProvider
-                                        dateAdapter={AdapterDayjs}
-                                      >
-                                        <DatePicker
-                                          {...field}
-                                          label="End Date"
-                                          value={field.value || null}
-                                          onChange={(date) => {
-                                            form.setFieldValue(
-                                              `courses.${index}.duration.endDate`,
-                                              date
-                                            );
-                                          }}
-                                          sx={{ width: "100%" }}
-                                        />
-                                      </LocalizationProvider>
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid
-                                  item
-                                  xs={12}
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    gap: "1rem",
-                                    marginTop: "-.7rem",
-                                    marginBottom: "1rem",
-                                  }}
-                                >
-                                  <CustomButton
-                                    variant="outlined"
-                                    onClick={() => remove(index)}
-                                  >
-                                    Remove Course
-                                  </CustomButton>
-                                  <CustomButton
-                                    variant="outlined"
-                                    onClick={() => push(workExpArr)}
-                                  >
-                                    Add Course
-                                  </CustomButton>
-                                </Grid>
-                              </Grid>
-                            ))}
-                          </div>
-                        )}
-                      </FieldArray>
                     </Grid>
 
                     <Grid item xs={12} justifyContent={"flex-end"}>
