@@ -73,6 +73,7 @@ const IconStyles = { fontSize: 40 };
 const ProfileForm = () => {
   const theme = useTheme();
   const router = useRouter();
+  // const userUID = auth && auth.currentUser.uid;
   const { userData, setUserData } = useUserStore();
   const [formData, setFormData] = useState(null);
   const [userRole, setUserRole] = useState(null);
@@ -92,11 +93,15 @@ const ProfileForm = () => {
     try {
       setLoading(true);
 
-      await setUserData(inputtedData);
+      await setUserData({
+        ...inputtedData,
+        isUserInfoComplete: true,
+        userType: userRole,
+      });
 
-      const docRef = doc(firestore, "users", auth.currentUser.uid);
+      const docRef = doc(firestore, "users", userData.uid);
       const docSnap = await getDoc(docRef);
-
+      console.log(docSnap.data());
       if (docSnap.exists()) {
         await setDoc(docRef, userData);
         setLoading(false);
@@ -104,18 +109,30 @@ const ProfileForm = () => {
         setSnackbarMsg("Information Updated Successfully");
 
         setTimeout(() => {
-          router.push("/");
+          // router.push("/");
         }, 3500);
       }
     } catch (err) {
       console.error(err);
+      setLoading(false);
       setSnackbarMsg(err);
     }
   };
 
   const displayedForm = () => {
     if (userRole === "seeker") {
-      return <SeekerForm goBack={handleGoBack} />;
+      return (
+        <SeekerForm
+          goBack={handleGoBack}
+          userUID={userData.uid}
+          handleCompleteUsrProfile={handleCompleteUsrProfile}
+          loading={loading}
+          setLoading={setLoading}
+          snackbarMsg={snackbarMsg}
+          snackbarOpen={snackbarOpen}
+          setSnackbarOpen={setSnackbarOpen}
+        />
+      );
     } else if (userRole === "employer") {
       return (
         <EmployerForm

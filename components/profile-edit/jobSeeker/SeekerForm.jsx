@@ -109,9 +109,10 @@ const skillLevels = ["beginner", "intermediate", "expert"];
 
 const SeekerForm = ({
   goBack,
-  userData,
   handleCompleteUsrProfile,
+  userUID,
   loading,
+  setLoading,
   snackbarMsg,
   snackbarOpen,
   setSnackbarOpen,
@@ -145,10 +146,10 @@ const SeekerForm = ({
     // This makes sure the info submitting is getting handled in a central place
     console.log("final submit");
     try {
-      const userId = userData.uid
+      setLoading(true);
       const timestamp = new Date().getTime();
       // replace "formPreviewData.reseme.name" with the name of the file uploaded
-      const fileName = `${userId}/${timestamp}_${formPreviewData.reseme.name}`;
+      const fileName = `${userUID}/${timestamp}_${formPreviewData.reseme.name}`;
       const storageRef = ref(storage, fileName);
       console.log(storageRef);
       // replace "formPreviewData.reseme" with the actual file uploaded
@@ -158,7 +159,13 @@ const SeekerForm = ({
 
       const downloadURL = await getDownloadURL(storageRef);
       console.log("Download URL:", downloadURL);
+      const dataToSubmit = { ...formPreviewData, reseme: downloadURL };
+      console.log("dataToSubmit", dataToSubmit);
+      // handleCompleteUsrProfile(dataToSubmit);
+      await handleCompleteUsrProfile(dataToSubmit);
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   };
@@ -463,7 +470,11 @@ const SeekerForm = ({
               <CustomButton variant="text" onClick={handleEditForm}>
                 Back
               </CustomButton>
-              <CustomButton variant="contained" onClick={handleFinalSubmit}>
+              <CustomButton
+                variant="contained"
+                disabled={loading}
+                onClick={handleFinalSubmit}
+              >
                 Submit
               </CustomButton>
             </Grid>
