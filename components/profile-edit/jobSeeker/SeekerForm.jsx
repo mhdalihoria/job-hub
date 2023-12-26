@@ -47,27 +47,22 @@ const validationSchema = Yup.object().shape({
       skillLvl: Yup.string().required("Required"),
     })
   ),
-  workExp: Yup.array().of(
-    Yup.object().shape({
-      jobTitle: Yup.string().required("Required"),
-      companyName: Yup.string().required("Required"),
-      jobRole: Yup.string().required("Required"),
-      duration: Yup.object().shape({
-        startDate: Yup.string().required("Required"),
-        endDate: Yup.string().required("Required"),
-      }),
-      // }).required("Required"),
-    })
-  ),
   courses: Yup.array().of(
     Yup.object().shape({
       courseTitle: Yup.string().required("Required"),
       courseAuthor: Yup.string().required("Required"),
       courseDescription: Yup.string().required("Required"),
-      duration: Yup.object().shape({
-        startDate: Yup.string().required("Required"),
-        endDate: Yup.string().required("Required"),
-      }),
+      startDate: Yup.string().required("Required"),
+      endDate: Yup.string().required("Required"),
+    })
+  ),
+  workExp: Yup.array().of(
+    Yup.object().shape({
+      jobTitle: Yup.string().optional(),
+      companyName: Yup.string().optional(),
+      jobRole: Yup.string().optional(),
+      startDate: Yup.string().optional(),
+      endDate: Yup.string().optional(),
     })
   ),
   reseme: Yup.mixed().required("Required"),
@@ -83,25 +78,28 @@ const workExpObj = {
   jobTitle: "",
   companyName: "",
   jobRole: "",
-  duration: { startDate: null, endDate: null },
+  startDate: "",
+  endDate: "",
 };
 
 const courseObj = {
   courseTitle: "",
   courseAuthor: "",
   courseDescription: "",
-  duration: { startDate: null, endDate: null },
+  startDate: "",
+  endDate: "",
 };
+
 const initialValues = {
   jobTitle: "",
   skills: [{ skillName: "", skillLvl: "" }],
-  workExp: [workExpObj],
   reseme: "",
   phoneNum: "",
   websiteLink: "",
   linkedInLink: "",
   githubLink: "",
   courses: [courseObj],
+  workExp: [workExpObj],
 };
 
 const skillLevels = ["beginner", "intermediate", "expert"];
@@ -243,70 +241,71 @@ const SeekerForm = ({
                 </Grid>
               </React.Fragment>
             ))}
-            {formPreviewData.workExp.map((data, index) => (
-              <React.Fragment key={index}>
-                <Grid item xs={12} sm={12}>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{ marginTop: "1em" }}
-                  >
-                    Work Experiences:
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    variant="standard"
-                    label="Job Title"
-                    sx={{ width: "100%" }}
-                    defaultValue={data.jobTitle}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    variant="standard"
-                    label="Company Name"
-                    sx={{ width: "100%" }}
-                    defaultValue={data.companyName}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                  <TextField
-                    variant="standard"
-                    label="Job Role"
-                    sx={{ width: "100%" }}
-                    defaultValue={data.jobRole}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Start Date"
-                      value={data.duration.startDate}
+            {formPreviewData.workExp &&
+              formPreviewData.workExp.map((data, index) => (
+                <React.Fragment key={index}>
+                  <Grid item xs={12} sm={12}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ marginTop: "1em" }}
+                    >
+                      Work Experiences:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      variant="standard"
+                      label="Job Title"
                       sx={{ width: "100%" }}
+                      defaultValue={data.jobTitle}
+                      InputProps={{
+                        readOnly: true,
+                      }}
                     />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="End Date"
-                      value={data.duration.endDate}
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      variant="standard"
+                      label="Company Name"
                       sx={{ width: "100%" }}
+                      defaultValue={data.companyName}
+                      InputProps={{
+                        readOnly: true,
+                      }}
                     />
-                  </LocalizationProvider>
-                </Grid>
-              </React.Fragment>
-            ))}
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      variant="standard"
+                      label="Job Role"
+                      sx={{ width: "100%" }}
+                      defaultValue={data.jobRole}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        label="Start Date"
+                        value={data.startDate}
+                        sx={{ width: "100%" }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        label="End Date"
+                        value={data.endDate}
+                        sx={{ width: "100%" }}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                </React.Fragment>
+              ))}
             {formPreviewData.phoneNum && (
               <Grid item xs={12}>
                 <Grid item xs={12} sm={12}>
@@ -433,7 +432,7 @@ const SeekerForm = ({
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           label="Starting From"
-                          value={course.duration.startDate}
+                          value={course.startDate}
                           sx={{ width: "100%" }}
                         />
                       </LocalizationProvider>
@@ -442,7 +441,7 @@ const SeekerForm = ({
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           label="End Date"
-                          value={course.duration.endDate}
+                          value={course.endDate}
                           sx={{ width: "100%" }}
                         />
                       </LocalizationProvider>
@@ -706,214 +705,7 @@ const SeekerForm = ({
                         )}
                       </FieldArray>
                     </Grid>
-                    <Grid item xs={12}>
-                      <Typography
-                        variant="h6"
-                        gutterBottom
-                        sx={{ marginTop: "1em" }}
-                      >
-                        Work Experience:
-                      </Typography>
-                      <FieldArray name="workExp">
-                        {({ push, remove }) => (
-                          <div>
-                            {values.workExp.map((_, index) => (
-                              <Grid
-                                key={index}
-                                container
-                                rowSpacing={3}
-                                columnSpacing={3}
-                                justifyContent="space-between"
-                              >
-                                <Grid item xs={12} sm={6}>
-                                  <Field name={`workExp.${index}.jobTitle`}>
-                                    {({ field, form }) => (
-                                      <TextField
-                                        variant="standard"
-                                        {...field}
-                                        label="Position Title"
-                                        sx={{ width: "100%" }}
-                                        error={
-                                          form.touched.workExp?.[index]
-                                            ?.jobTitle &&
-                                          Boolean(
-                                            form.errors.workExp?.[index]
-                                              ?.jobTitle
-                                          )
-                                        }
-                                        helperText={
-                                          form.touched.workExp?.[index]
-                                            ?.jobTitle &&
-                                          form.errors.workExp?.[index]?.jobTitle
-                                        }
-                                      />
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                  <Field name={`workExp.${index}.companyName`}>
-                                    {({ field, form }) => (
-                                      <TextField
-                                        variant="standard"
-                                        label="Company Name"
-                                        sx={{ width: "100%" }}
-                                        {...field}
-                                        error={
-                                          form.touched.workExp?.[index]
-                                            ?.companyName &&
-                                          Boolean(
-                                            form.errors.workExp?.[index]
-                                              ?.companyName
-                                          )
-                                        }
-                                        helperText={
-                                          form.touched.workExp?.[index]
-                                            ?.companyName &&
-                                          form.errors.workExp?.[index]
-                                            ?.companyName
-                                        }
-                                      />
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12}>
-                                  <Field name={`workExp.${index}.jobRole`}>
-                                    {({ field, form }) => (
-                                      <TextField
-                                        variant="standard"
-                                        multiline
-                                        rows={4}
-                                        sx={{ width: "100%" }}
-                                        {...field}
-                                        label="Position Role"
-                                        error={
-                                          form.touched.workExp?.[index]
-                                            ?.jobRole &&
-                                          Boolean(
-                                            form.errors.workExp?.[index]
-                                              ?.jobRole
-                                          )
-                                        }
-                                        helperText={
-                                          form.touched.workExp?.[index]
-                                            ?.jobRole &&
-                                          form.errors.workExp?.[index]?.jobRole
-                                        }
-                                      />
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                  <Field
-                                    name={`workExp.${index}.duration.startDate`}
-                                  >
-                                    {({ field, form }) => (
-                                      <>
-                                        <LocalizationProvider
-                                          dateAdapter={AdapterDayjs}
-                                        >
-                                          <DatePicker
-                                            {...field}
-                                            label="Starting From"
-                                            value={field.value || null}
-                                            onChange={(date) => {
-                                              form.setFieldValue(
-                                                `workExp.${index}.duration.startDate`,
-                                                date
-                                              );
-                                            }}
-                                            sx={{ width: "100%" }}
-                                          />
-                                        </LocalizationProvider>
-                                        <ErrorMessageStyled>
-                                          <ErrorMessage
-                                            name={`workExp.${index}.duration.startDate`}
-                                            as={FormHelperText}
-                                          />
-                                        </ErrorMessageStyled>
-                                      </>
-                                    )}
-                                  </Field>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                  <Field
-                                    name={`workExp.${index}.duration.endDate`}
-                                  >
-                                    {({ field, form }) => (
-                                      <>
-                                        <LocalizationProvider
-                                          dateAdapter={AdapterDayjs}
-                                        >
-                                          <DatePicker
-                                            {...field}
-                                            label="End Date"
-                                            value={field.value || null}
-                                            onChange={(date) => {
-                                              form.setFieldValue(
-                                                `workExp.${index}.duration.endDate`,
-                                                date
-                                              );
-                                            }}
-                                            sx={{ width: "100%" }}
-                                            error={
-                                              form.touched.workExp?.[index]
-                                                ?.duration?.endDate &&
-                                              Boolean(
-                                                form.errors.workExp?.[index]
-                                                  ?.duration?.endDate
-                                              )
-                                            }
-                                            helperText={
-                                              form.touched.workExp?.[index]
-                                                ?.duration?.endDate &&
-                                              form.errors.workExp?.[index]
-                                                ?.duration?.endDate
-                                            }
-                                          />
-                                        </LocalizationProvider>
-                                        <ErrorMessageStyled>
-                                          <ErrorMessage
-                                            name={`workExp.${index}.duration.endDate`}
-                                            as={FormHelperText}
-                                          />
-                                        </ErrorMessageStyled>
-                                      </>
-                                    )}
-                                  </Field>
-                                </Grid>
 
-                                <Grid
-                                  item
-                                  xs={12}
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    gap: "1rem",
-                                    marginTop: "-.7rem",
-                                    marginBottom: "1rem",
-                                  }}
-                                >
-                                  {index !== 0 && (
-                                    <CustomButton
-                                      variant="outlined"
-                                      onClick={() => remove(index)}
-                                    >
-                                      Remove Experience
-                                    </CustomButton>
-                                  )}
-                                  <CustomButton
-                                    variant="outlined"
-                                    onClick={() => push(workExpObj)}
-                                  >
-                                    Add Experience
-                                  </CustomButton>
-                                </Grid>
-                              </Grid>
-                            ))}
-                          </div>
-                        )}
-                      </FieldArray>
-                    </Grid>
                     <Grid item xs={12}>
                       <Typography
                         variant="h6"
@@ -1016,9 +808,7 @@ const SeekerForm = ({
                                   </Field>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                  <Field
-                                    name={`courses.${index}.duration.startDate`}
-                                  >
+                                  <Field name={`courses.${index}.startDate`}>
                                     {({ field, form }) => (
                                       <>
                                         <LocalizationProvider
@@ -1030,7 +820,7 @@ const SeekerForm = ({
                                             value={field.value || null}
                                             onChange={(date) => {
                                               form.setFieldValue(
-                                                `courses.${index}.duration.startDate`,
+                                                `courses.${index}.startDate`,
                                                 date
                                               );
                                             }}
@@ -1039,7 +829,7 @@ const SeekerForm = ({
                                         </LocalizationProvider>
                                         <ErrorMessageStyled>
                                           <ErrorMessage
-                                            name={`courses.${index}.duration.startDate`}
+                                            name={`courses.${index}.startDate`}
                                             as={FormHelperText}
                                           />
                                         </ErrorMessageStyled>
@@ -1048,9 +838,7 @@ const SeekerForm = ({
                                   </Field>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                  <Field
-                                    name={`courses.${index}.duration.endDate`}
-                                  >
+                                  <Field name={`courses.${index}.endDate`}>
                                     {({ field, form }) => (
                                       <>
                                         <LocalizationProvider
@@ -1062,7 +850,7 @@ const SeekerForm = ({
                                             value={field.value || null}
                                             onChange={(date) => {
                                               form.setFieldValue(
-                                                `courses.${index}.duration.endDate`,
+                                                `courses.${index}.endDate`,
                                                 date
                                               );
                                             }}
@@ -1071,7 +859,7 @@ const SeekerForm = ({
                                         </LocalizationProvider>
                                         <ErrorMessageStyled>
                                           <ErrorMessage
-                                            name={`courses.${index}.duration.endDate`}
+                                            name={`courses.${index}.endDate`}
                                             as={FormHelperText}
                                           />
                                         </ErrorMessageStyled>
@@ -1121,6 +909,144 @@ const SeekerForm = ({
                       sx={{ marginTop: "1rem", marginBottom: "-0.6rem" }}
                     >
                       <h2>Education & Personal Info:</h2>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ marginTop: "1em" }}
+                      >
+                        Work Experience:
+                      </Typography>
+                      <FieldArray name="workExp">
+                        {({ push, remove }) => (
+                          <div>
+                            {values.workExp.map((_, index) => (
+                              <Grid
+                                key={index}
+                                container
+                                rowSpacing={3}
+                                columnSpacing={3}
+                                justifyContent="space-between"
+                              >
+                                <Grid item xs={12} sm={6}>
+                                  <Field name={`workExp.${index}.jobTitle`}>
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        {...field}
+                                        label="Position Title"
+                                        sx={{ width: "100%" }}
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field name={`workExp.${index}.companyName`}>
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        label="Company Name"
+                                        sx={{ width: "100%" }}
+                                        {...field}
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12}>
+                                  <Field name={`workExp.${index}.jobRole`}>
+                                    {({ field, form }) => (
+                                      <TextField
+                                        variant="standard"
+                                        multiline
+                                        rows={4}
+                                        sx={{ width: "100%" }}
+                                        {...field}
+                                        label="Position Role"
+                                      />
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field name={`workExp.${index}.startDate`}>
+                                    {({ field, form }) => (
+                                      <>
+                                        <LocalizationProvider
+                                          dateAdapter={AdapterDayjs}
+                                        >
+                                          <DatePicker
+                                            {...field}
+                                            label="Starting From"
+                                            value={field.value || null}
+                                            onChange={(date) => {
+                                              form.setFieldValue(
+                                                `workExp.${index}.startDate`,
+                                                date
+                                              );
+                                            }}
+                                            sx={{ width: "100%" }}
+                                          />
+                                        </LocalizationProvider>
+                                      </>
+                                    )}
+                                  </Field>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <Field name={`workExp.${index}.endDate`}>
+                                    {({ field, form }) => (
+                                      <>
+                                        <LocalizationProvider
+                                          dateAdapter={AdapterDayjs}
+                                        >
+                                          <DatePicker
+                                            {...field}
+                                            label="End Date"
+                                            value={field.value || null}
+                                            onChange={(date) => {
+                                              form.setFieldValue(
+                                                `workExp.${index}.endDate`,
+                                                date
+                                              );
+                                            }}
+                                            sx={{ width: "100%" }}
+                                          />
+                                        </LocalizationProvider>
+                                      </>
+                                    )}
+                                  </Field>
+                                </Grid>
+
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    gap: "1rem",
+                                    marginTop: "-.7rem",
+                                    marginBottom: "1rem",
+                                  }}
+                                >
+                                  {index !== 0 && (
+                                    <CustomButton
+                                      variant="outlined"
+                                      onClick={() => remove(index)}
+                                    >
+                                      Remove Experience
+                                    </CustomButton>
+                                  )}
+                                  <CustomButton
+                                    variant="outlined"
+                                    onClick={() => push(workExpObj)}
+                                  >
+                                    Add Experience
+                                  </CustomButton>
+                                </Grid>
+                              </Grid>
+                            ))}
+                          </div>
+                        )}
+                      </FieldArray>
                     </Grid>
                     <Grid item xs={12} rowSpacing={3}>
                       <Typography
