@@ -80,7 +80,6 @@ const EmployerForm = ({
   const [formPreviewData, setFormPreviewData] = useState(null);
   const [shouldPreview, setShouldPreview] = useState(false);
 
-
   const handleInitialFormSubmit = (values) => {
     console.log("submit", values);
     setFormPreviewData(values);
@@ -92,7 +91,7 @@ const EmployerForm = ({
   };
 
   const handleFinalSubmit = () => {
-    handleCompleteUsrProfile({ ...formPreviewData, isUserInfoComplete: true });
+    handleCompleteUsrProfile(formPreviewData);
   };
 
   const handleSnackbarClose = (event, reason) => {
