@@ -28,6 +28,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import React, { useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "@/lib/firebase";
+import dayjs from "dayjs";
 // -----------------------------------------
 
 const ErrorMessageStyled = styled("div")(({ theme }) => ({
@@ -290,7 +291,7 @@ const SeekerForm = ({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label="Start Date"
-                        value={data.startDate}
+                        value={dayjs(data.startDate)}
                         sx={{ width: "100%" }}
                       />
                     </LocalizationProvider>
@@ -299,7 +300,7 @@ const SeekerForm = ({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label="End Date"
-                        value={data.endDate}
+                        value={dayjs(data.endDate)}
                         sx={{ width: "100%" }}
                       />
                     </LocalizationProvider>
@@ -432,7 +433,7 @@ const SeekerForm = ({
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           label="Starting From"
-                          value={course.startDate}
+                          value={dayjs(course.startDate)}
                           sx={{ width: "100%" }}
                         />
                       </LocalizationProvider>
@@ -441,7 +442,7 @@ const SeekerForm = ({
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           label="End Date"
-                          value={course.endDate}
+                          value={dayjs(course.endDate)}
                           sx={{ width: "100%" }}
                         />
                       </LocalizationProvider>
@@ -821,7 +822,7 @@ const SeekerForm = ({
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `courses.${index}.startDate`,
-                                                date
+                                                date.toString()
                                               );
                                             }}
                                             sx={{ width: "100%" }}
@@ -851,7 +852,7 @@ const SeekerForm = ({
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `courses.${index}.endDate`,
-                                                date
+                                                date.toString()
                                               );
                                             }}
                                             sx={{ width: "100%" }}
@@ -981,7 +982,7 @@ const SeekerForm = ({
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `workExp.${index}.startDate`,
-                                                date
+                                                date.toString()
                                               );
                                             }}
                                             sx={{ width: "100%" }}
@@ -1005,7 +1006,7 @@ const SeekerForm = ({
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `workExp.${index}.endDate`,
-                                                date
+                                                date.toString()
                                               );
                                             }}
                                             sx={{ width: "100%" }}
