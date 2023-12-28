@@ -27,8 +27,11 @@ import IndeterminateCheckBox from "@mui/icons-material/IndeterminateCheckBox";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import React, { useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "@/lib/firebase";
 import dayjs from "dayjs";
+import { auth, firestore, storage } from "@/lib/firebase";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import useUserStore from "@/stores/userStore";
+import { useRouter } from "next/router";
 // -----------------------------------------
 
 const ErrorMessageStyled = styled("div")(({ theme }) => ({
@@ -108,17 +111,18 @@ const skillLevels = ["beginner", "intermediate", "expert"];
 
 const SeekerForm = ({
   goBack,
-  handleCompleteUsrProfile,
   userUID,
-  loading,
-  setLoading,
-  snackbarMsg,
-  snackbarOpen,
-  setSnackbarOpen,
+  userRole,
 }) => {
+  const { userData, setUserData } = useUserStore();
+  const router = useRouter();
   const [fileName, setFileName] = useState("");
   const [shouldPreview, setShouldPreview] = useState(false);
   const [formPreviewData, setFormPreviewData] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   console.log(formPreviewData);
   const handleOnImageChange = (event, form) => {
     const file = event.target.files[0];
@@ -143,9 +147,10 @@ const SeekerForm = ({
   const handleFinalSubmit = async () => {
     // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
     // This makes sure the info submitting is getting handled in a central place
-    console.log("final submit");
     try {
       setLoading(true);
+      //------ Uploading Reseme to Firebase's Storage ----
+      //--------------------------------------------------
       const timestamp = new Date().getTime();
       // replace "formPreviewData.reseme.name" with the name of the file uploaded
       const fileName = `${userUID}/${timestamp}_${formPreviewData.reseme.name}`;
@@ -155,16 +160,34 @@ const SeekerForm = ({
       await uploadBytes(storageRef, formPreviewData.reseme).then((snapshot) => {
         console.log("Uploaded a blob or file!", snapshot);
       });
-
       const downloadURL = await getDownloadURL(storageRef);
-      console.log("Download URL:", downloadURL);
-      const dataToSubmit = { ...formPreviewData, reseme: downloadURL };
-      console.log("dataToSubmit", dataToSubmit);
-      // handleCompleteUsrProfile(dataToSubmit);
-      await handleCompleteUsrProfile(dataToSubmit);
-      setLoading(false);
+      //--------------------------------------------------
+      const dataToSubmit = {
+        ...formPreviewData,
+        reseme: downloadURL,
+        isUserInfoComplete: true,
+        userType: userRole,
+      };
+
+      const docRef = doc(firestore, "users", userData.uid);
+      const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
+      if (docSnap.exists()) {
+        await setDoc(docRef, dataToSubmit);
+        await setUserData(dataToSubmit);
+
+        await setLoading(false);
+        await setSnackbarOpen(true);
+
+        setSnackbarMsg("Information Updated Successfully");
+
+        setTimeout(() => {
+          router.push("/");
+        }, 3500);
+      }
     } catch (err) {
       setLoading(false);
+      setSnackbarMsg("Something Weng Wrong Try Again Later");
       console.error(err);
     }
   };
@@ -243,6 +266,7 @@ const SeekerForm = ({
               </React.Fragment>
             ))}
             {formPreviewData.workExp &&
+              formPreviewData.workExp[0].jobTitle &&
               formPreviewData.workExp.map((data, index) => (
                 <React.Fragment key={index}>
                   <Grid item xs={12} sm={12}>
@@ -818,7 +842,11 @@ const SeekerForm = ({
                                           <DatePicker
                                             {...field}
                                             label="Starting From"
-                                            value={field.value || null}
+                                            value={
+                                              (field.value &&
+                                                dayjs(field.value)) ||
+                                              null
+                                            }
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `courses.${index}.startDate`,
@@ -848,7 +876,11 @@ const SeekerForm = ({
                                           <DatePicker
                                             {...field}
                                             label="End Date"
-                                            value={field.value || null}
+                                            value={
+                                              (field.value &&
+                                                dayjs(field.value)) ||
+                                              null
+                                            }
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `courses.${index}.endDate`,
@@ -978,7 +1010,11 @@ const SeekerForm = ({
                                           <DatePicker
                                             {...field}
                                             label="Starting From"
-                                            value={field.value || null}
+                                            value={
+                                              (field.value &&
+                                                dayjs(field.value)) ||
+                                              null
+                                            }
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `workExp.${index}.startDate`,
@@ -1002,7 +1038,11 @@ const SeekerForm = ({
                                           <DatePicker
                                             {...field}
                                             label="End Date"
-                                            value={field.value || null}
+                                            value={
+                                              (field.value &&
+                                                dayjs(field.value)) ||
+                                              null
+                                            }
                                             onChange={(date) => {
                                               form.setFieldValue(
                                                 `workExp.${index}.endDate`,
