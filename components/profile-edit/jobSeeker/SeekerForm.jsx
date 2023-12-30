@@ -29,7 +29,7 @@ import React, { useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import dayjs from "dayjs";
 import { auth, firestore, storage } from "@/lib/firebase";
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { addDoc, updateDoc, doc, getDoc, setDoc } from "firebase/firestore";
 import useUserStore from "@/stores/userStore";
 import { useRouter } from "next/router";
 // -----------------------------------------
@@ -109,11 +109,7 @@ const initialValues = {
 const skillLevels = ["beginner", "intermediate", "expert"];
 // -----------------------------------------
 
-const SeekerForm = ({
-  goBack,
-  userUID,
-  userRole,
-}) => {
+const SeekerForm = ({ goBack, userUID, userRole }) => {
   const { userData, setUserData } = useUserStore();
   const router = useRouter();
   const [fileName, setFileName] = useState("");
@@ -170,21 +166,16 @@ const SeekerForm = ({
       };
 
       const docRef = doc(firestore, "users", userData.uid);
-      const docSnap = await getDoc(docRef);
-      console.log(docSnap.data());
-      if (docSnap.exists()) {
-        await setDoc(docRef, dataToSubmit);
-        await setUserData(dataToSubmit);
 
-        await setLoading(false);
-        await setSnackbarOpen(true);
+      await updateDoc(docRef, dataToSubmit);
+      await setLoading(false);
+      await setUserData(dataToSubmit);
+      await setSnackbarOpen(true);
+      setSnackbarMsg("Information Updated Successfully");
 
-        setSnackbarMsg("Information Updated Successfully");
-
-        setTimeout(() => {
-          router.push("/");
-        }, 3500);
-      }
+      setTimeout(() => {
+        router.push("/");
+      }, 3500);
     } catch (err) {
       setLoading(false);
       setSnackbarMsg("Something Weng Wrong Try Again Later");
