@@ -22,7 +22,7 @@ import * as Yup from "yup";
 import React, { useState } from "react";
 import useUserStore from "@/stores/userStore";
 import { auth, firestore } from "@/lib/firebase";
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 
 // -----------------------------------------
@@ -69,16 +69,15 @@ const companySize = [
 ];
 // -----------------------------------------
 
-const EmployerForm = ({
-  goBack,
-  handleCompleteUsrProfile,
-  loading,
-  snackbarMsg,
-  snackbarOpen,
-  setSnackbarOpen,
-}) => {
+const EmployerForm = ({ goBack }) => {
+  const { userData, setUserData } = useUserStore();
+  const router = useRouter();
   const [formPreviewData, setFormPreviewData] = useState(null);
   const [shouldPreview, setShouldPreview] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // console.log(userData);
 
   const handleInitialFormSubmit = (values) => {
     console.log("submit", values);
@@ -90,8 +89,30 @@ const EmployerForm = ({
     setShouldPreview(false);
   };
 
-  const handleFinalSubmit = () => {
-    handleCompleteUsrProfile(formPreviewData);
+  const handleFinalSubmit = async () => {
+    // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
+    // This makes sure the info submitting is getting handled in a central place
+    try {
+      console.log("final submit");
+      setLoading(true);
+      const dataToSubmit = { ...formPreviewData, isUserInfoComplete: true };
+
+      const docRef = doc(firestore, "users", auth.currentUser.uid);
+
+      await updateDoc(docRef, dataToSubmit);
+      await setUserData(dataToSubmit);
+      await setLoading(false);
+      await setSnackbarOpen(true);
+      await setSnackbarMsg("Information Updated Successfully");
+
+      setTimeout(() => {
+        router.push("/")
+      }, 3500);
+      
+    } catch (err) {
+      console.error(err);
+      setSnackbarMsg(err);
+    }
   };
 
   const handleSnackbarClose = (event, reason) => {
