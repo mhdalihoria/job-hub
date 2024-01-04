@@ -18,6 +18,7 @@ import {
 //--------------------------------------------------------------
 
 const SectionContainer = styled(Card)(({ theme }) => ({
+  marginTop: "1rem",
   padding: "2rem",
 }));
 
@@ -35,7 +36,7 @@ const data = [
   },
 ];
 
-const ProfileInfoBlock = () => {
+const ProfileInfoBlock = ({ sectionTitle, sectionData }) => {
   const formatTime = (date) => {
     const startDate = new Date(date);
     return startDate.toLocaleDateString("en-GB");
@@ -45,9 +46,9 @@ const ProfileInfoBlock = () => {
     <SectionContainer>
       <Container maxWidth="lg">
         <Typography variant="h5" gutterBottom mb={4}>
-          Section Title
+          {sectionTitle}
         </Typography>
-        {data.map((item, index) => {
+        {sectionData.map((item, index) => {
           return (
             <Box key={item.title}>
               <Typography component="h1" variant="button" gutterBottom>
