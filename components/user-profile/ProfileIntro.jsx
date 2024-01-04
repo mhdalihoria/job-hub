@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import LanguageIcon from "@mui/icons-material/Language";
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -47,8 +49,54 @@ const TableRow = styled(Paper)({
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
+const userInfo = [
+  {
+    title: "First Name",
+    value: "Komrad",
+  },
+  {
+    title: "Email",
+    value: "email@email.com",
+  },
+  {
+    title: "Phone",
+    value: "+963 934960439",
+  },
+];
+
+const userLinks = [
+  {
+    type: "linkedin",
+    link: "https://www.linkedin.com/in/ali-horia/",
+  },
+  {
+    type: "github",
+    link: "https://github.com/mhdalihoria/",
+  },
+  {
+    type: "website",
+    link: "http://forsa.sy/",
+  },
+];
+
 const ProfileIntro = () => {
   const downMd = useMediaQuery((theme) => theme.breakpoints.down("md"));
+
+  const userLinkIcon = (iconName) => {
+    switch (iconName) {
+      case "github": {
+        return <GitHubIcon />;
+      }
+      case "linkedin": {
+        return <LinkedInIcon />;
+      }
+      case "website": {
+        return <LanguageIcon />;
+      }
+      default:
+        null;
+    }
+  };
 
   return (
     <SectionContainer>
@@ -124,15 +172,16 @@ const ProfileIntro = () => {
             </Stack>
 
             <Box>
-              <IconButton>
-                <LinkedInIcon />
-              </IconButton>
-              <IconButton>
-                <LinkedInIcon />
-              </IconButton>
-              <IconButton>
-                <LinkedInIcon />
-              </IconButton>
+              {userLinks.map((link) => {
+                return (
+                  <IconButton
+                    key={link.link}
+                    onClick={() => window.open(link.link, '_blank')}
+                  >
+                    {userLinkIcon(link.type)}
+                  </IconButton>
+                );
+              })}
             </Box>
           </Box>
         </Box>
@@ -149,9 +198,13 @@ const ProfileIntro = () => {
               }),
             }}
           >
-            <TableRowItem title="First Name" value={"Komrad"} />
-            <TableRowItem title="Email" value={"email@email.com"} />
-            <TableRowItem title="Phone" value={"+963 934960439"} />
+            {userInfo.map((info) => (
+              <TableRowItem
+                key={info.title}
+                title={info.title}
+                value={info.value}
+              />
+            ))}
           </TableRow>
         </Box>
       </Container>
