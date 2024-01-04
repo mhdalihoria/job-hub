@@ -14,12 +14,12 @@ const containerStyle = {
   minHeight: "100vh",
 };
 
-function Layout({ children }) {
+function Layout({ children, title="Job Hub" }) {
   return (
     <Box sx={containerStyle}>
       <Navbar />
       <Head>
-        <title>Job Hub</title>
+        <title>{title}</title>
       </Head>
       <ContentStyled>{children}</ContentStyled>
       <Footer />
