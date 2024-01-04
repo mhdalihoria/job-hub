@@ -16,7 +16,7 @@ import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LanguageIcon from "@mui/icons-material/Language";
-
+import DescriptionIcon from '@mui/icons-material/Description';
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
@@ -67,15 +67,23 @@ const userInfo = [
 const userLinks = [
   {
     type: "linkedin",
+    title: "LinkedIn Profile",
     link: "https://www.linkedin.com/in/ali-horia/",
   },
   {
     type: "github",
+    title: "GitHub Profile",
     link: "https://github.com/mhdalihoria/",
   },
   {
     type: "website",
+    title: "Personal Website",
     link: "http://forsa.sy/",
+  },
+  {
+    type: "reseme",
+    title: "Reseme Link",
+    link: "https://firebasestorage.googleapis.com/v0/b/job-hub-42069.appspot.com/o/aIGZeGBJi5dsrBVZaTNnhfX8HW02%2F1703943490247_Resume.pdf?alt=media&token=e16dc9b9-ca99-44b6-b7c7-3c89fa7e33b8",
   },
 ];
 
@@ -92,6 +100,9 @@ const ProfileIntro = () => {
       }
       case "website": {
         return <LanguageIcon />;
+      }
+      case "reseme": {
+        return <DescriptionIcon />;
       }
       default:
         null;
@@ -177,6 +188,7 @@ const ProfileIntro = () => {
                   <IconButton
                     key={link.link}
                     onClick={() => window.open(link.link, '_blank')}
+                    title={link.title}
                   >
                     {userLinkIcon(link.type)}
                   </IconButton>
