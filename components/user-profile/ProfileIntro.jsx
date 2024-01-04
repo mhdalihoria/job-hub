@@ -13,6 +13,10 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
 
 const SectionContainer = styled(Card)(({ theme }) => ({
   padding: "2rem",
@@ -25,6 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
 }));
+
 const TableRow = styled(Paper)({
   display: "flex",
   flexWrap: "wrap",
@@ -38,6 +43,10 @@ const TableRow = styled(Paper)({
     whiteSpace: "pre",
   },
 });
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+
 const ProfileIntro = () => {
   const downMd = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
@@ -94,16 +103,38 @@ const ProfileIntro = () => {
               />
             </Box>
           </Box>
-          <Stack
-            spacing={{ xs: 1, sm: 2 }}
-            direction="row"
-            flexWrap="wrap"
-            maxWidth={200}
-            gap={1}
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              flexWrap: "wrap",
+            }}
           >
-            <h4>Komrad Komrad</h4>
-            <p style={{margin: 0}}>Junior Web Developer</p>
-          </Stack>
+            <Stack
+              spacing={{ xs: 1, sm: 2 }}
+              direction="row"
+              flexWrap="wrap"
+              maxWidth={200}
+              gap={1}
+            >
+              <h4>Komrad Komrad</h4>
+              <p style={{ margin: 0 }}>Junior Web Developer</p>
+            </Stack>
+
+            <Box>
+              <IconButton>
+                <LinkedInIcon />
+              </IconButton>
+              <IconButton>
+                <LinkedInIcon />
+              </IconButton>
+              <IconButton>
+                <LinkedInIcon />
+              </IconButton>
+            </Box>
+          </Box>
         </Box>
         <Box sx={{ marginTop: "2rem" }}>
           <TableRow
