@@ -1,23 +1,10 @@
-import React from "react";
-import {
-  Card,
-  styled,
-  Container,
-  Box,
-  Avatar,
-  IconButton,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-  useMediaQuery,
-  Divider,
-} from "@mui/material";
+import { Card, styled, Container, Box, Paper, Typography } from "@mui/material";
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
 const SectionContainer = styled(Card)(({ theme }) => ({
+  marginTop: "1rem",
   padding: "2rem",
 }));
 
@@ -32,14 +19,7 @@ const Item = styled(Paper)(({ theme }) => ({
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
-const skills = [
-  { skillName: "dsadsa", skillLvl: "intermediate" },
-  { skillName: "dsadssa", skillLvl: "intermediate" },
-  { skillName: "dsadsdsa", skillLvl: "intermediate" },
-  { skillName: "dsadsdfsa", skillLvl: "intermediate" },
-];
-
-const ProfileSkillsBlock = () => {
+const ProfileSkillsBlock = ({ userSkills }) => {
   return (
     <SectionContainer>
       <Container maxWidth="lg">
@@ -47,7 +27,7 @@ const ProfileSkillsBlock = () => {
           Skills:
         </Typography>
         <Box display={"flex"} flexWrap={"wrap"} gap={1.5}>
-          {skills.map((skill) => (
+          {userSkills.map((skill) => (
             <Item key={`${skill.skillName}${skill.skillLvl}`}>
               {skill.skillName} - {skill.skillLvl}
             </Item>
