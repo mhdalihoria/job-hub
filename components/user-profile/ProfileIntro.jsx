@@ -17,6 +17,8 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LanguageIcon from "@mui/icons-material/Language";
 import DescriptionIcon from "@mui/icons-material/Description";
+import CustomButton from "../custom-mui-components/Button/CustomButton";
+import { useRouter } from "next/router";
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -71,6 +73,7 @@ const ProfileIntro = ({
   userJobTitle,
   userLinks,
 }) => {
+  const router = useRouter();
   const downMd = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   const userLinkIcon = (iconName) => {
@@ -95,6 +98,18 @@ const ProfileIntro = ({
   return (
     <SectionContainer>
       <Container maxWidth="lg">
+        <Box
+          display={"flex"}
+          justifyContent={"flex-end"}
+          sx={{ width: "100%" }}
+        >
+          <CustomButton
+            variant="contained"
+            onClick={() => router.push("/profile-edit")}
+          >
+            Edit Profile
+          </CustomButton>
+        </Box>
         <Box
           sx={{
             display: "flex",
