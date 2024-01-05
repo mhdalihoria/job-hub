@@ -143,24 +143,32 @@ const SeekerForm = ({ goBack, userUID, userRole }) => {
   const handleFinalSubmit = async () => {
     // create a state or a function that we pass to EmployerForm and SeekerForm and pass the values to it for it to be submitted into firebase
     // This makes sure the info submitting is getting handled in a central place
+    let downloadURL;
     try {
       setLoading(true);
       //------ Uploading Reseme to Firebase's Storage ----
       //--------------------------------------------------
-      const timestamp = new Date().getTime();
-      // replace "formPreviewData.reseme.name" with the name of the file uploaded
-      const fileName = `${userUID}/${timestamp}_${formPreviewData.reseme.name}`;
-      const storageRef = ref(storage, fileName);
-      console.log(storageRef);
-      // replace "formPreviewData.reseme" with the actual file uploaded
-      await uploadBytes(storageRef, formPreviewData.reseme).then((snapshot) => {
-        console.log("Uploaded a blob or file!", snapshot);
-      });
-      const downloadURL = await getDownloadURL(storageRef);
+      if (typeof formPreviewData.reseme !== "string") {
+        const timestamp = new Date().getTime();
+        // replace "formPreviewData.reseme.name" with the name of the file uploaded
+        const fileName = `${userUID}/${timestamp}_${formPreviewData.reseme.name}`;
+        const storageRef = ref(storage, fileName);
+        console.log(storageRef);
+        // replace "formPreviewData.reseme" with the actual file uploaded
+        await uploadBytes(storageRef, formPreviewData.reseme).then(
+          (snapshot) => {
+            console.log("Uploaded a blob or file!", snapshot);
+          }
+        );
+        downloadURL = await getDownloadURL(storageRef);
+      }
       //--------------------------------------------------
       const dataToSubmit = {
         ...formPreviewData,
-        reseme: downloadURL,
+        reseme:
+          typeof formPreviewData.reseme !== "string"
+            ? downloadURL
+            : formPreviewData.reseme,
         isUserInfoComplete: true,
         userType: userRole,
       };
@@ -472,7 +480,11 @@ const SeekerForm = ({ goBack, userUID, userRole }) => {
                 Uploaded Reseme:
               </Typography>
               <iframe
-                src={URL.createObjectURL(formPreviewData.reseme)}
+                src={
+                  typeof formPreviewData.reseme === "string"
+                    ? formPreviewData.reseme
+                    : URL.createObjectURL(formPreviewData.reseme)
+                }
                 width="100%"
                 height="300px"
               />
@@ -497,8 +509,17 @@ const SeekerForm = ({ goBack, userUID, userRole }) => {
         ) : (
           <Formik
             validationSchema={validationSchema}
-            initialValues={formPreviewData ? formPreviewData : initialValues}
+            initialValues={
+              formPreviewData ||
+              (userData &&
+                userData.lastName &&
+                userData.email &&
+                userData.userType &&
+                userData) ||
+              initialValues
+            }
             onSubmit={handleFormSubmit}
+            enableReinitialize={true}
           >
             {({ values, errors }) => {
               return (
@@ -517,6 +538,20 @@ const SeekerForm = ({ goBack, userUID, userRole }) => {
                       </Typography>
                       <Field name="reseme">
                         {({ field, form }) => {
+                          const displayResemeName = () => {
+                            if (!!values.reseme.name) {
+                              return values.reseme.name;
+                            }
+                            if (!!values.reseme) {
+                              const pathSegments = values.reseme.split("/");
+
+                              return pathSegments[
+                                pathSegments.length - 1
+                              ].split("?")[0];
+                            }
+
+                            return "";
+                          };
                           return (
                             <>
                               <div>
@@ -558,7 +593,8 @@ const SeekerForm = ({ goBack, userUID, userRole }) => {
                                 </ErrorMessageStyled>
 
                                 <FormHelperText>
-                                  {values.reseme ? values.reseme.name : ""}
+                                  {/* {values.reseme.name || values.reseme || ""} */}
+                                  {displayResemeName()}
                                 </FormHelperText>
                               </div>
                             </>
