@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SeekerForm from "@/components/profile-edit/jobSeeker/SeekerForm";
 import EmployerForm from "@/components/profile-edit/employer/EmployerForm";
 import useUserStore from "@/stores/userStore";
@@ -72,16 +72,27 @@ const IconStyles = { fontSize: 40 };
 
 const ProfileForm = () => {
   const theme = useTheme();
+  const router = useRouter();
   // const userUID = auth && auth.currentUser.uid;
   const { userData, setUserData } = useUserStore();
   const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    if (!!userData.userType) {
+      setUserRole(userData.userType);
+    }
+  }, [userData]);
 
   const handleChooseUserRole = (role) => {
     setUserRole(role);
   };
 
   const handleGoBack = () => {
-    setUserRole(null);
+    if (!!userData.isUserInfoComplete) {
+      router.back();
+    } else {
+      setUserRole(null);
+    }
   };
 
   const displayedForm = () => {
