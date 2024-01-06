@@ -42,13 +42,13 @@ const ProfileInfoBlock = ({ sectionTitle, sectionData }) => {
   return (
     <SectionContainer>
       <Container maxWidth="lg">
-        <Typography variant="h5" gutterBottom mb={4}>
+        <Typography variant="h4" gutterBottom mb={4}>
           {sectionTitle}
         </Typography>
         {sectionData.map((item, index) => {
           return (
             <Box key={item.title}>
-              <Typography component="h1" variant="button" gutterBottom>
+              <Typography component="h1" variant="h5" gutterBottom>
                 <strong>{item.title}</strong>
               </Typography>
               <Typography component="h2" variant="body2" gutterBottom>
