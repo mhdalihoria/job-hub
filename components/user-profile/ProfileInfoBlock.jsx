@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   Divider,
 } from "@mui/material";
+import formatTime from "@/utils/formatTime/formatTime";
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -37,10 +38,6 @@ const data = [
 ];
 
 const ProfileInfoBlock = ({ sectionTitle, sectionData }) => {
-  const formatTime = (date) => {
-    const startDate = new Date(date);
-    return startDate.toLocaleDateString("en-GB");
-  };
 
   return (
     <SectionContainer>
