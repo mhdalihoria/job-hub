@@ -81,8 +81,8 @@ const userInfo = [
 
 const ProfileIntro = ({
   userIntroduction,
-  userFullName,
-  userJobTitle,
+  userTitle,
+  userSubTitle,
   userLinks,
 }) => {
   const router = useRouter();
@@ -190,7 +190,7 @@ const ProfileIntro = ({
         <Box
           display={"flex"}
           justifyContent={"flex-end"}
-          sx={{ width: "100%" }}
+          sx={{ width: "100%", marginBottom: "1rem" }}
         >
           <CustomButton
             variant="contained"
@@ -266,8 +266,8 @@ const ProfileIntro = ({
               maxWidth={200}
               gap={1}
             >
-              <h4>{userFullName}</h4>
-              <p style={{ margin: 0 }}>{userJobTitle}</p>
+              <h4>{userTitle}</h4>
+              <p style={{ margin: 0 }}>{userSubTitle}</p>
             </Stack>
 
             <Box>
