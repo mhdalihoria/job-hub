@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import {
   deleteObject,
   getDownloadURL,
+  listAll,
   ref,
   uploadBytes,
 } from "firebase/storage";
@@ -126,16 +127,36 @@ const ProfileIntro = ({
     setLoading(true);
 
     try {
+      // Get a list of all items in the profile picture directory
+      const profilePicDirectoryRef = ref(storage, `${userData.uid}/pfp/`);
+      const items = await listAll(profilePicDirectoryRef);
 
+      // Delete each item in the directory
+      await Promise.all(
+        items.items.map(async (item) => {
+          await deleteObject(item).catch((error) => {
+            // Ignore errors if the file doesn't exist
+            if (error.code !== "storage/object-not-found") {
+              throw error;
+            }
+          });
+        })
+      );
+
+      // Getting Refrence of the user file
       const docRef = doc(firestore, "users", userData.uid);
+      // Getting the extention of the uploaded file
       const pfpExtention = file[0].name.split(".")[1];
+      // Uploading profilePic to a /pfp directory
       const fileName = `${userData.uid}/pfp/profilePic.${pfpExtention}`;
       const storageRef = ref(storage, fileName);
 
+      // Uploading pfp to Firestore Storage
       await uploadBytes(storageRef, file[0]);
       const downloadURL = await getDownloadURL(storageRef);
       const profileImageUploaded = { profileImg: downloadURL };
 
+      // Uploading pfp link to Firestore (and Zustand state)
       await updateDoc(docRef, profileImageUploaded);
       setUserData(profileImageUploaded);
 
