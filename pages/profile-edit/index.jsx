@@ -105,7 +105,7 @@ const ProfileForm = () => {
         />
       );
     } else if (userRole === "employer") {
-      return <EmployerForm goBack={handleGoBack} />;
+      return <EmployerForm goBack={handleGoBack} userRole={userRole} />;
     } else {
       return (
         <ContainerStyled>
