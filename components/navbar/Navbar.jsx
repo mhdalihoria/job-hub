@@ -383,7 +383,7 @@ export default function PrimarySearchAppBar() {
                       height={40}
                       width={40}
                       alt="profile-picture"
-                      style={{ borderRadius: "100px" }}
+                      style={{ borderRadius: "100px", objectFit: "cover" }}
                     />
                   )}
                 </IconButton>
