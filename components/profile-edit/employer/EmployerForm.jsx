@@ -69,7 +69,7 @@ const companySize = [
 ];
 // -----------------------------------------
 
-const EmployerForm = ({ goBack }) => {
+const EmployerForm = ({ goBack, userRole }) => {
   const { userData, setUserData } = useUserStore();
   const router = useRouter();
   const [formPreviewData, setFormPreviewData] = useState(null);
@@ -95,7 +95,11 @@ const EmployerForm = ({ goBack }) => {
     try {
       console.log("final submit");
       setLoading(true);
-      const dataToSubmit = { ...formPreviewData, isUserInfoComplete: true };
+      const dataToSubmit = {
+        ...formPreviewData,
+        isUserInfoComplete: true,
+        userType: userRole,
+      };
 
       const docRef = doc(firestore, "users", auth.currentUser.uid);
 
@@ -106,9 +110,8 @@ const EmployerForm = ({ goBack }) => {
       await setSnackbarMsg("Information Updated Successfully");
 
       setTimeout(() => {
-        router.push("/")
+        router.push("/");
       }, 3500);
-      
     } catch (err) {
       console.error(err);
       setSnackbarMsg(err);
@@ -262,7 +265,11 @@ const EmployerForm = ({ goBack }) => {
         ) : (
           <Formik
             validationSchema={validationSchema}
-            initialValues={formPreviewData ? formPreviewData : initialValues}
+            initialValues={
+              formPreviewData ||
+              (userData.companyData && userData) ||
+              initialValues
+            }
             onSubmit={handleInitialFormSubmit}
           >
             {({ values, errors }) => {
