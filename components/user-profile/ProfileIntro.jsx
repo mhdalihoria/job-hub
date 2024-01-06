@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   styled,
@@ -11,6 +11,8 @@ import {
   Stack,
   Typography,
   useMediaQuery,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -19,6 +21,15 @@ import LanguageIcon from "@mui/icons-material/Language";
 import DescriptionIcon from "@mui/icons-material/Description";
 import CustomButton from "../custom-mui-components/Button/CustomButton";
 import { useRouter } from "next/router";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import useUserStore from "@/stores/userStore";
+import { firestore, storage } from "@/lib/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -75,6 +86,13 @@ const ProfileIntro = ({
 }) => {
   const router = useRouter();
   const downMd = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const { userData, setUserData } = useUserStore();
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [snackbarData, setSnackbarData] = useState({
+    status: null,
+    message: null,
+  });
 
   const userLinkIcon = (iconName) => {
     switch (iconName) {
@@ -93,6 +111,56 @@ const ProfileIntro = ({
       default:
         null;
     }
+  };
+
+  const profilePicUpload = async (file) => {
+    if (file[0].size >= 1048576) {
+      setSnackbarData({
+        status: "error",
+        message: "Image Size is Too Big",
+      });
+      setOpen(true);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+
+      const docRef = doc(firestore, "users", userData.uid);
+      const pfpExtention = file[0].name.split(".")[1];
+      const fileName = `${userData.uid}/pfp/profilePic.${pfpExtention}`;
+      const storageRef = ref(storage, fileName);
+
+      await uploadBytes(storageRef, file[0]);
+      const downloadURL = await getDownloadURL(storageRef);
+      const profileImageUploaded = { profileImg: downloadURL };
+
+      await updateDoc(docRef, profileImageUploaded);
+      setUserData(profileImageUploaded);
+
+      setSnackbarData({
+        status: "success",
+        message: "Image Uploaded",
+      });
+    } catch (err) {
+      console.error(err);
+      setSnackbarData({
+        status: "error",
+        message: "Something Went Wrong Please Try Later",
+      });
+    }
+
+    setLoading(false);
+    setOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -128,7 +196,7 @@ const ProfileIntro = ({
             mb={4}
           >
             <Avatar
-              src=""
+              src={!!userData.profileImg ? userData.profileImg : ""}
               sx={{
                 height: 64,
                 width: 64,
@@ -145,6 +213,7 @@ const ProfileIntro = ({
                     height: "30px",
                     bgcolor: "grey.300",
                   }}
+                  disabled={loading}
                 >
                   <CameraEnhanceIcon fontSize="small" />
                 </IconButton>
@@ -153,7 +222,7 @@ const ProfileIntro = ({
 
             <Box display="none">
               <input
-                onChange={(e) => console.log(e.target.files)}
+                onChange={(e) => profilePicUpload(e.target.files)}
                 id="profile-image"
                 accept="image/*"
                 type="file"
@@ -218,6 +287,19 @@ const ProfileIntro = ({
           </TableRow>
         </Box>
       </Container>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarData.status}
+          sx={{ width: "100%" }}
+        >
+          {snackbarData.message}
+        </Alert>
+      </Snackbar>
     </SectionContainer>
   );
 };
