@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   i18n: { defaultLocale: "en", locales: ["en", "ar"] },
   images: {
-    domains: ["lh3.googleusercontent.com"],
+    domains: ["lh3.googleusercontent.com", "firebasestorage.googleapis.com"],
   },
 };
 
