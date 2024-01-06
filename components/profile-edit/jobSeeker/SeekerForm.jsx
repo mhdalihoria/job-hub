@@ -151,7 +151,7 @@ const SeekerForm = ({ goBack, userUID, userRole }) => {
       if (typeof formPreviewData.reseme !== "string") {
         const timestamp = new Date().getTime();
         // replace "formPreviewData.reseme.name" with the name of the file uploaded
-        const fileName = `${userUID}/${timestamp}_${formPreviewData.reseme.name}`;
+        const fileName = `${userUID}/reseme/${timestamp}_${formPreviewData.reseme.name}`;
         const storageRef = ref(storage, fileName);
         console.log(storageRef);
         // replace "formPreviewData.reseme" with the actual file uploaded
