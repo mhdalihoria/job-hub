@@ -78,8 +78,8 @@ const SeekerProfile = ({ userData }) => {
     <ProfileContainer>
       <ProfileIntro
         userIntroduction={userIntroduction}
-        userFullName={`${userData.firstName} ${userData.lastName}`}
-        userJobTitle={`${userData.jobTitle}`}
+        userTitle={`${userData.firstName} ${userData.lastName}`}
+        userSubTitle={`${userData.jobTitle}`}
         userLinks={userLinks}
       />
       <Grid container columnSpacing={2} rowSpacing={2}>
