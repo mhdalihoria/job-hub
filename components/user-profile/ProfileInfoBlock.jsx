@@ -38,28 +38,37 @@ const data = [
 ];
 
 const ProfileInfoBlock = ({ sectionTitle, sectionData }) => {
-
   return (
     <SectionContainer>
       <Container maxWidth="lg">
-        <Typography variant="h4" gutterBottom mb={4}>
-          {sectionTitle}
-        </Typography>
+        {sectionTitle && (
+          <Typography variant="h4" gutterBottom mb={4}>
+            {sectionTitle}
+          </Typography>
+        )}
         {sectionData.map((item, index) => {
           return (
             <Box key={item.title}>
-              <Typography component="h1" variant="h5" gutterBottom>
-                <strong>{item.title}</strong>
-              </Typography>
-              <Typography component="h2" variant="body2" gutterBottom>
-                {item.subTitle}
-              </Typography>
-              <Typography component="p" variant="caption" gutterBottom>
-                {formatTime(item.startDate)} - {formatTime(item.endDate)}
-              </Typography>
-              <Typography component="p" variant="body1" gutterBottom>
-                {item.description}
-              </Typography>
+              {!!item.title && (
+                <Typography component="h1" variant="h5" gutterBottom>
+                  <strong>{item.title}</strong>
+                </Typography>
+              )}
+              {!!item.subTitle && (
+                <Typography component="h2" variant="body2" gutterBottom>
+                  {item.subTitle}
+                </Typography>
+              )}
+              {!!item.startDate && !!item.startDate && (
+                <Typography component="p" variant="caption" gutterBottom>
+                  {formatTime(item.startDate)} - {formatTime(item.endDate)}
+                </Typography>
+              )}
+              {!!item.description && (
+                <Typography component="p" variant="body1" gutterBottom>
+                  {item.description}
+                </Typography>
+              )}
               {data.length > 0 && index !== data.length - 1 && (
                 <Divider sx={{ m: "1.5rem 0" }} />
               )}
