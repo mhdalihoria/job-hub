@@ -380,8 +380,8 @@ export default function PrimarySearchAppBar() {
                   ) : (
                     <Image
                       src={userData.profileImg}
-                      height={40}
-                      width={40}
+                      height={30}
+                      width={30}
                       alt="profile-picture"
                       style={{ borderRadius: "100px", objectFit: "cover" }}
                     />
