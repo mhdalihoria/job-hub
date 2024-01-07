@@ -48,6 +48,7 @@ const EmployerProfile = ({ userData, isAuthorizedUser = false }) => {
           userData.companyData && userData.companyData[0].companyIndustry
         }
         userLinks={userLinks}
+        userProfilePic={userData.profileImg}
         isAuthorizedUser={isAuthorizedUser}
       />
       <ProfileInfoBlock

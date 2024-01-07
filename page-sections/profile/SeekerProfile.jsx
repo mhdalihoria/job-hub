@@ -81,6 +81,7 @@ const SeekerProfile = ({ userData, isAuthorizedUser = false }) => {
         userTitle={`${userData.firstName} ${userData.lastName}`}
         userSubTitle={`${userData.jobTitle}`}
         userLinks={userLinks}
+        userProfilePic={userData.profileImg}
         isAuthorizedUser={isAuthorizedUser}
       />
       <Grid container columnSpacing={2} rowSpacing={2}>

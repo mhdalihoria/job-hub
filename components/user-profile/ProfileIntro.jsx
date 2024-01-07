@@ -84,6 +84,7 @@ const ProfileIntro = ({
   userTitle,
   userSubTitle,
   userLinks,
+  userProfilePic,
   isAuthorizedUser,
 }) => {
   const router = useRouter();
@@ -219,13 +220,23 @@ const ProfileIntro = ({
             }}
             mb={4}
           >
-            <Avatar
-              src={!!userData.profileImg ? userData.profileImg : ""}
-              sx={{
-                height: 64,
-                width: 64,
-              }}
-            />
+            {isAuthorizedUser ? (
+              <Avatar
+                src={!!userData.profileImg ? userData.profileImg : ""}
+                sx={{
+                  height: 64,
+                  width: 64,
+                }}
+              />
+            ) : (
+              <Avatar
+                src={userProfilePic || ""}
+                sx={{
+                  height: 64,
+                  width: 64,
+                }}
+              />
+            )}
 
             {isAuthorizedUser && (
               <>
