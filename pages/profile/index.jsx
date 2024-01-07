@@ -13,9 +13,9 @@ const Profile = () => {
   return (
     <DefaultLayout>
       {!!userData && userData.userType === "seeker" ? (
-        <SeekerProfile userData={userData}/>
+        <SeekerProfile userData={userData} isAuthorizedUser={true} />
       ) : (
-        <EmployerProfile userData={userData}/>
+        <EmployerProfile userData={userData} isAuthorizedUser={true} />
       )}
     </DefaultLayout>
   );
