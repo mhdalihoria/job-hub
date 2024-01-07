@@ -15,7 +15,7 @@ const ProfileContainer = styled("div")(({ theme }) => ({
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
-const SeekerProfile = ({ userData }) => {
+const SeekerProfile = ({ userData, isAuthorizedUser = false }) => {
   // Profile Intro Arrays (start) ------------------------------
   const userIntroduction = [
     { title: "First Name", value: userData.firstName },
@@ -81,6 +81,7 @@ const SeekerProfile = ({ userData }) => {
         userTitle={`${userData.firstName} ${userData.lastName}`}
         userSubTitle={`${userData.jobTitle}`}
         userLinks={userLinks}
+        isAuthorizedUser={isAuthorizedUser}
       />
       <Grid container columnSpacing={2} rowSpacing={2}>
         <Grid item xs={12} sm={12} md={8}>

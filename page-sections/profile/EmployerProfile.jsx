@@ -15,7 +15,7 @@ const ProfileContainer = styled("div")(({ theme }) => ({
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
-const EmployerProfile = ({ userData }) => {
+const EmployerProfile = ({ userData, isAuthorizedUser = false }) => {
   // Profile Intro Arrays (start) ------------------------------
   const userIntroduction = [
     { title: "Email", value: userData.email },
@@ -48,6 +48,7 @@ const EmployerProfile = ({ userData }) => {
           userData.companyData && userData.companyData[0].companyIndustry
         }
         userLinks={userLinks}
+        isAuthorizedUser={isAuthorizedUser}
       />
       <ProfileInfoBlock
         sectionTitle={"About Us"}

@@ -84,6 +84,7 @@ const ProfileIntro = ({
   userTitle,
   userSubTitle,
   userLinks,
+  isAuthorizedUser,
 }) => {
   const router = useRouter();
   const downMd = useMediaQuery((theme) => theme.breakpoints.down("md"));
@@ -187,18 +188,20 @@ const ProfileIntro = ({
   return (
     <SectionContainer>
       <Container maxWidth="lg">
-        <Box
-          display={"flex"}
-          justifyContent={"flex-end"}
-          sx={{ width: "100%", marginBottom: "1rem" }}
-        >
-          <CustomButton
-            variant="contained"
-            onClick={() => router.push("/profile-edit")}
+        {isAuthorizedUser && (
+          <Box
+            display={"flex"}
+            justifyContent={"flex-end"}
+            sx={{ width: "100%", marginBottom: "1rem" }}
           >
-            Edit Profile
-          </CustomButton>
-        </Box>
+            <CustomButton
+              variant="contained"
+              onClick={() => router.push("/profile-edit")}
+            >
+              Edit Profile
+            </CustomButton>
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",
@@ -224,31 +227,35 @@ const ProfileIntro = ({
               }}
             />
 
-            <Box ml={-2.5}>
-              <label htmlFor="profile-image">
-                <IconButton
-                  component="span"
-                  color="primary"
-                  sx={{
-                    width: "30px",
-                    height: "30px",
-                    bgcolor: "grey.300",
-                  }}
-                  disabled={loading}
-                >
-                  <CameraEnhanceIcon fontSize="small" />
-                </IconButton>
-              </label>
-            </Box>
+            {isAuthorizedUser && (
+              <>
+                <Box ml={-2.5}>
+                  <label htmlFor="profile-image">
+                    <IconButton
+                      component="span"
+                      color="primary"
+                      sx={{
+                        width: "30px",
+                        height: "30px",
+                        bgcolor: "grey.300",
+                      }}
+                      disabled={loading}
+                    >
+                      <CameraEnhanceIcon fontSize="small" />
+                    </IconButton>
+                  </label>
+                </Box>
 
-            <Box display="none">
-              <input
-                onChange={(e) => profilePicUpload(e.target.files)}
-                id="profile-image"
-                accept="image/*"
-                type="file"
-              />
-            </Box>
+                <Box display="none">
+                  <input
+                    onChange={(e) => profilePicUpload(e.target.files)}
+                    id="profile-image"
+                    accept="image/*"
+                    type="file"
+                  />
+                </Box>
+              </>
+            )}
           </Box>
           <Box
             sx={{
