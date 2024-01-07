@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   Snackbar,
   Alert,
+  Modal,
 } from "@mui/material";
 import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -32,6 +33,7 @@ import useUserStore from "@/stores/userStore";
 import { firestore, storage } from "@/lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { nanoid } from "nanoid";
+import CloseIcon from "@mui/icons-material/Close";
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
@@ -53,6 +55,18 @@ const TableRow = styled(Paper)({
   },
 });
 
+const JobPostingFormContainer = styled(Paper)({
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "60%",
+  minWidth: "200px",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  padding: "20px",
+});
+
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
@@ -69,6 +83,7 @@ const ProfileIntro = ({
   const { userData, setUserData } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [snackbarData, setSnackbarData] = useState({
     status: null,
     message: null,
@@ -163,6 +178,10 @@ const ProfileIntro = ({
     setOpen(false);
   };
 
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   return (
     <SectionContainer>
       <Container maxWidth="lg">
@@ -170,8 +189,16 @@ const ProfileIntro = ({
           <Box
             display={"flex"}
             justifyContent={"flex-end"}
+            gap={2}
             sx={{ width: "100%", marginBottom: "1rem" }}
           >
+            <CustomButton
+              variant="contained"
+              color="secondary"
+              onClick={() => setModalOpen(true)}
+            >
+              Add Job Posting
+            </CustomButton>
             <CustomButton
               variant="contained"
               onClick={() => router.push("/profile-edit")}
@@ -316,6 +343,32 @@ const ProfileIntro = ({
           {snackbarData.message}
         </Alert>
       </Snackbar>
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <JobPostingFormContainer>
+          <Stack
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            spacing={2}
+            sx={{ width: "100%", marginBottom: "2rem" }}
+          >
+            <IconButton onClick={handleModalClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+        </JobPostingFormContainer>
+      </Modal>
     </SectionContainer>
   );
 };
