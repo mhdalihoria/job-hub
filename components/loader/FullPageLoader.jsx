@@ -15,7 +15,7 @@ const ContainerStyles = styled("div")(({ theme }) => ({
   background: theme.palette.background.default,
 }));
 
-const FullPageLoader = ({size, loading}) => {
+const FullPageLoader = ({ size = 60, loading }) => {
   const theme = useTheme();
 
   return (
