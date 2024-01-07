@@ -31,20 +31,12 @@ import {
 import useUserStore from "@/stores/userStore";
 import { firestore, storage } from "@/lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
-
+import { nanoid } from "nanoid";
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
 const SectionContainer = styled(Card)(({ theme }) => ({
   padding: "2rem",
-}));
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
 }));
 
 const TableRow = styled(Paper)({
@@ -63,21 +55,6 @@ const TableRow = styled(Paper)({
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
-
-const userInfo = [
-  {
-    title: "First Name",
-    value: "Komrad",
-  },
-  {
-    title: "Email",
-    value: "email@email.com",
-  },
-  {
-    title: "Phone",
-    value: "+963 934960439",
-  },
-];
 
 const ProfileIntro = ({
   userIntroduction,
@@ -292,7 +269,7 @@ const ProfileIntro = ({
               {userLinks.map((link) => {
                 return (
                   <IconButton
-                    key={link.link}
+                    key={nanoid()}
                     onClick={() => window.open(link.link, "_blank")}
                     title={link.title}
                   >
@@ -318,7 +295,7 @@ const ProfileIntro = ({
           >
             {userIntroduction.map((info) => (
               <TableRowItem
-                key={info.title}
+                key={nanoid()}
                 title={info.title}
                 value={info.value}
               />
