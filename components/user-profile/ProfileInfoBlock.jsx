@@ -14,6 +14,7 @@ import {
   Divider,
 } from "@mui/material";
 import formatTime from "@/utils/formatTime/formatTime";
+import { nanoid } from "nanoid";
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -48,7 +49,7 @@ const ProfileInfoBlock = ({ sectionTitle, sectionData }) => {
         )}
         {sectionData.map((item, index) => {
           return (
-            <Box key={item.title}>
+            <Box key={nanoid()}>
               {!!item.title && (
                 <Typography component="h1" variant="h5" gutterBottom>
                   <strong>{item.title}</strong>
