@@ -13,7 +13,6 @@ import {
   useMediaQuery,
   Snackbar,
   Alert,
-  Modal,
 } from "@mui/material";
 import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -192,13 +191,15 @@ const ProfileIntro = ({
             gap={2}
             sx={{ width: "100%", marginBottom: "1rem" }}
           >
-            <CustomButton
-              variant="contained"
-              color="secondary"
-              onClick={() => setModalOpen(true)}
-            >
-              Add Job Posting
-            </CustomButton>
+            {userData.userType === "employer" && (
+              <CustomButton
+                variant="contained"
+                color="secondary"
+                onClick={() => router.push("/post-job")}
+              >
+                Add Job Posting
+              </CustomButton>
+            )}
             <CustomButton
               variant="contained"
               onClick={() => router.push("/profile-edit")}
@@ -343,32 +344,6 @@ const ProfileIntro = ({
           {snackbarData.message}
         </Alert>
       </Snackbar>
-      <Modal
-        open={modalOpen}
-        onClose={handleModalClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <JobPostingFormContainer>
-          <Stack
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="flex-start"
-            spacing={2}
-            sx={{ width: "100%", marginBottom: "2rem" }}
-          >
-            <IconButton onClick={handleModalClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Stack>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </JobPostingFormContainer>
-      </Modal>
     </SectionContainer>
   );
 };
